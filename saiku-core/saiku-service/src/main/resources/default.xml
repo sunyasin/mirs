@@ -1,0 +1,207 @@
+<Schema name="foms" metamodelVersion="4.0">
+  <PhysicalSchema>
+    <Table schema="dbo" name="DctRegion"/>
+    <Table schema="dbo" name="DctMo"/>
+    <Table schema="dbo" name="MV_EO_FEU_FACT"/>
+    <Table schema="dbo" name="MV_EO_MO_KEYS"/>
+    <Table schema="dbo" name="MV_EO_FEU_FACT" alias="facts"/>
+
+    <Query alias="OMS_MO_TYPE_2017">
+      <ExpressionView>
+        <SQL dialect="mssql"><![CDATA[
+select "KEY", VERSION, cast (NAME as varchar) as NAME, DICT_KEY, ORD, PARENT_KEY, INDATE, OUTDATE from dbo.dict_elems('OMS_MO_TYPE_2017')
+          ]]></SQL>
+      </ExpressionView>
+    </Query>
+
+    <Query alias="OMS_PROFIL_2017">
+      <ExpressionView>
+        <SQL dialect="mssql"><![CDATA[
+select "KEY", VERSION, cast (NAME as varchar) as NAME, DICT_KEY, ORD, PARENT_KEY, INDATE, OUTDATE from dbo.dict_elems('OMS_PROFIL_2017')
+          ]]></SQL>
+      </ExpressionView>
+    </Query>
+
+    <Query alias="OMS_HGROUP_2017">
+      <ExpressionView>
+        <SQL dialect="mssql"><![CDATA[
+select "KEY", VERSION, cast (NAME as varchar) as NAME, DICT_KEY, ORD, PARENT_KEY, INDATE, OUTDATE from dbo.dict_elems('OMS_HGROUP_2017')
+          ]]></SQL>
+      </ExpressionView>
+    </Query>
+
+    <Query alias="OMS_HVID_2017">
+      <ExpressionView>
+        <SQL dialect="mssql"><![CDATA[
+select "KEY", VERSION, cast (NAME as varchar) as NAME, DICT_KEY, ORD, PARENT_KEY, INDATE, OUTDATE from dbo.dict_elems('OMS_HVID_2017')
+          ]]></SQL>
+      </ExpressionView>
+    </Query>
+
+    <Query alias="OMS_HMETOD_2017">
+      <ExpressionView>
+        <SQL dialect="mssql"><![CDATA[
+select "KEY", VERSION, cast (NAME as varchar) as NAME, DICT_KEY, ORD, PARENT_KEY, INDATE, OUTDATE from dbo.dict_elems('OMS_HMETOD_2017')
+          ]]></SQL>
+      </ExpressionView>
+    </Query>
+
+  </PhysicalSchema>
+
+  <Dimension table="DctRegion" key="terr_key" name="terr">
+    <Attributes>
+      <Attribute name="terr_key" column="Name">
+        <Key>
+          <Column name="Id"/>
+        </Key>
+        <Name>
+          <Column name="Name"/>
+        </Name>
+      </Attribute>
+    </Attributes>
+  </Dimension>
+
+  <Dimension table="DctRegion" key="terr_strah_key" name="terr_strah">
+    <Attributes>
+      <Attribute name="terr_strah_key" column="Name">
+        <Key>
+          <Column name="Id"/>
+        </Key>
+        <Name>
+          <Column name="Name"/>
+        </Name>
+      </Attribute>
+    </Attributes>
+  </Dimension>
+
+  <Dimension table="DctMo" key="mo_key" name="mo">
+    <Attributes>
+      <Attribute name="mo_key" column="Name">
+        <Key>
+          <Column name="Id"/>
+        </Key>
+        <Name>
+          <Column name="Name"/>
+        </Name>
+      </Attribute>
+    </Attributes>
+  </Dimension>
+
+  <Dimension table="OMS_PROFIL_2017" key="prof_key" name="prof">
+    <Attributes>
+      <Attribute name="prof_key" column="NAME">
+        <Key>
+          <Column name="KEY"/>
+        </Key>
+        <Name>
+          <Column name="NAME"/>
+        </Name>
+      </Attribute>
+    </Attributes>
+  </Dimension>
+
+  <Dimension table="OMS_HGROUP_2017" key="gr_key" name="gr">
+    <Attributes>
+      <Attribute name="gr_key" column="NAME">
+        <Key>
+          <Column name="KEY"/>
+        </Key>
+        <Name>
+          <Column name="NAME"/>
+        </Name>
+      </Attribute>
+    </Attributes>
+  </Dimension>
+
+  <Dimension table="OMS_HVID_2017" key="vidvmp_key" name="vidvmp">
+    <Attributes>
+      <Attribute name="vidvmp_key" column="NAME">
+        <Key>
+          <Column name="KEY"/>
+        </Key>
+        <Name>
+          <Column name="NAME"/>
+        </Name>
+      </Attribute>
+    </Attributes>
+  </Dimension>
+
+  <Dimension table="OMS_HMETOD_2017" key="metvmp_key" name="metvmp">
+    <Attributes>
+      <Attribute name="metvmp_key" column="NAME">
+        <Key>
+          <Column name="KEY"/>
+        </Key>
+        <Name>
+          <Column name="NAME"/>
+        </Name>
+      </Attribute>
+    </Attributes>
+  </Dimension>
+
+  <Dimension table="OMS_MO_TYPE_2017" key="vedpri_key" name="vedpri">
+    <Attributes>
+      <Attribute name="vedpri_key" column="NAME">
+        <Key>
+          <Column name="KEY"/>
+        </Key>
+        <Name>
+          <Column name="NAME"/>
+        </Name>
+      </Attribute>
+    </Attributes>
+  </Dimension>
+
+  <Dimension name="dt" type="TIME" key="dt">
+    <Attributes>
+      <Attribute name="dt" table="facts" keyColumn="dt" hasHierarchy="true"/>
+    </Attributes>
+  </Dimension>
+
+  <Cube name="cube1" visible="true" cache="true" enabled="true">
+    <Dimensions>
+      <Dimension source="terr"/>
+      <Dimension source="mo"/>
+      <Dimension source="prof"/>
+      <Dimension source="vedpri"/>
+      <Dimension source="dt"/>
+      <Dimension source="gr"/>
+    </Dimensions>
+    <MeasureGroups>
+
+      <MeasureGroup name="mg2" table="MV_EO_FEU_FACT" schema="dbo">
+        <DimensionLinks>
+          <ForeignKeyLink dimension="terr" foreignKeyColumn="terr_key"/>
+          <ForeignKeyLink dimension="mo" foreignKeyColumn="mo_key"/>
+          <ForeignKeyLink dimension="vedpri" foreignKeyColumn="vedpri_key"/>
+          <ForeignKeyLink dimension="prof" foreignKeyColumn="prof_key"/>
+          <ForeignKeyLink dimension="gr" foreignKeyColumn="gr_key"/>
+          <ForeignKeyLink dimension="dt" foreignKeyColumn="dt"/>
+        </DimensionLinks>
+        <Measures>
+          <Measure name="fact_vol" column="fact_vol" aggregator="sum" visible="true"/>
+          <Measure name="fact_sum" column="fact_sum" aggregator="sum" visible="true"/>
+          <Measure name="srok" column="srok" aggregator="distinct-count" visible="true"/>
+          <Measure name="cnt" column="cnt" aggregator="distinct-count" visible="true"/>
+        </Measures>
+      </MeasureGroup>
+
+      <MeasureGroup name="mg1" table="MV_EO_MO_KEYS" schema="dbo">
+        <DimensionLinks>
+          <ForeignKeyLink dimension="terr" foreignKeyColumn="terr_key"/>
+          <ForeignKeyLink dimension="mo" foreignKeyColumn="mo_key"/>
+          <ForeignKeyLink dimension="vedpri" foreignKeyColumn="vedpri_key"/>
+          <ForeignKeyLink dimension="prof" foreignKeyColumn="prof_key"/>
+          <ForeignKeyLink dimension="gr" foreignKeyColumn="gr_key"/>
+          <ForeignKeyLink dimension="dt" foreignKeyColumn="dt"/>
+        </DimensionLinks>
+        <Measures>
+          <Measure name="plan_vol" column="plan_vol" aggregator="sum" visible="true"/>
+          <Measure name="plan_sum" column="plan_sum" aggregator="sum" visible="true"/>
+        </Measures>
+      </MeasureGroup>
+
+    </MeasureGroups>
+  </Cube>
+
+</Schema>

@@ -1,0 +1,37 @@
+<div id="indicators_tab_content" class="">
+    <div class="ind_header">
+        <div class="ind_search_icon"></div>
+        <input placeholder="Найти
+                    " class="ind_search"> <label class="ind_header_label">ЗАГОЛОВОК ТЕКУЩЕГО РАЗДЕЛА</label>
+        <div class="ind_date_period_block"><label>Период</label> <input type="date"></div>
+    </div>
+    <div class="ind_content">
+        <div class="ind_tree __web-inspector-hide-shortcut__"></div>
+        <div class="ind_table">
+            <div class="ind_table_content"></div>
+        </div>
+        <div class="ind_panels"></div>
+    </div>
+</div>
+
+
+
+
+<div class='ind_table_header'></div>
+<div v-for="row in rows" class="ind_table_row">
+    <div class="ind_table_cube_row">
+        <label class="ind_table_cube_name"></label>
+        <label class="ind_table_cube_value"></label>
+        <label class="ind_table_cube_chart"></label>
+    </div>
+
+    <div class="ind_table_ind" v-for="ind in row.childs">
+        <div class="ind_table_ind_row">
+            <label class="ind_table_ind_name"></label>
+            <label class="ind_table_ind_value"></label>
+            <label class="ind_table_ind_chart"></label>
+        </div>
+        
+    </div>
+
+</div>

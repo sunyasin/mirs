@@ -1,0 +1,661 @@
+АПИ индикаторов: /service/indicator/
+
+Фильтры:
+    idMeasure:number            id показателя
+    beginDate:date              дата начала периода расчета панели
+    endDate:date                дата окончания периода расчета панели
+    filterGrbs:[number]         список id группировок по ГРБС
+    filterOrganisation:[string] список id формата idGrbs.idOrganization
+
+    beginDate, endDate, filterGrbs, filterOrganisation не обязательные параметры. filterGrbs и filterOrganisation можно использовать вместе и по отдельности
+    работает как логическое И
+
+1)  Получение одного индикатора
+    GET /panel?idMeasure=141&beginDate=2018-06-01&endDate=2018-06-30&filterGrbs=812&filterOrganisation=812.105778,812.182520,812.182535,816.182509
+
+    Ответ:
+{
+   "name": "Доля штатных сотрудников, по которым оформлен кадровый документ",
+   "idMeasure": 141,
+   "beginDate": [
+      2018,
+      6,
+      1
+   ],
+   "endDate": [
+      2018,
+      6,
+      30
+   ],
+   "type": 1,
+   "value": "26.56",
+   "subValue": "10567.0",
+   "changePercentValue": "83,68 ",
+   "lastPeriodValue": "162.7",
+   "tableDataGrbs": [
+      {
+         "name": "Министерство природных ресурсов, лесного хозяйства и экологии Пермского края",
+         "value": 2.0454545
+      },
+      {
+         "name": "Министерство культуры Пермского края",
+         "value": 0.5714286
+      },
+      {
+         "name": "Департамент образования администрации города Перми",
+         "value": 0.52910054
+      }
+   ],
+   "tableDataOrganization": [
+      {
+         "name": "ГКУ ПК \"ФХУ\"",
+         "value": 5.882353
+      },
+      {
+         "name": "МИНИСТЕРСТВО ЗДРАВООХРАНЕНИЯ ПЕРМСКОГО КРАЯ",
+         "value": 4.2016807
+      },
+      {
+         "name": "МИНПРИРОДЫ ПЕРМСКОГО КРАЯ",
+         "value": 3.902439
+      }
+   ]
+}
+2) Полуние списка индикаторов
+    POST /panel
+    Body:
+{
+    "filterGrbs":[812],
+    "filterOrganisation":["812.105778", "812.182520", "812.182535", "816.182509"],
+    "measures":[
+          {
+          "idMeasure": 140,
+          "beginDate": "2018-06-01",
+          "endDate": "2018-06-30"
+       },
+       {
+          "idMeasure": 141,
+          "beginDate": "2018-06-01",
+          "endDate": "2018-06-30"
+       }
+    ]
+}
+    Ответ:
+[
+   {
+      "name": "Количество штатных сотрудников, по которым оформлен кадровый документ",
+      "idMeasure": 140,
+      "beginDate": [
+         2018,
+         6,
+         1
+      ],
+      "endDate": [
+         2018,
+         6,
+         30
+      ],
+      "type": 4,
+      "value": "4881.0",
+      "subValue": "0.0",
+      "changePercentValue": "0,83 ",
+      "lastPeriodValue": "4922.0",
+      "tableDataGrbs": [
+         {
+            "name": "Министерство здравоохранения Пермского края",
+            "value": 2327
+         },
+         {
+            "name": "Министерство образования и науки Пермского края",
+            "value": 564
+         },
+         {
+            "name": "Министерство информационного развития и связи Пермского края",
+            "value": 499
+         }
+      ],
+      "tableDataOrganization": [
+         {
+            "name": "ГБУЗ ПК \"ПЦРБ\"",
+            "value": 651
+         },
+         {
+            "name": "ГБУЗ ПК \"КГБ\"",
+            "value": 599
+         },
+         {
+            "name": "КГАУ \"ПЕРМСКИЙ КРАЕВОЙ  МФЦ ПГМУ\"",
+            "value": 467
+         }
+      ]
+   },
+   {
+      "name": "Доля штатных сотрудников, по которым оформлен кадровый документ",
+      "idMeasure": 141,
+      "beginDate": [
+         2018,
+         6,
+         1
+      ],
+      "endDate": [
+         2018,
+         6,
+         30
+      ],
+      "type": 1,
+      "value": "26.56",
+      "subValue": "10567.0",
+      "changePercentValue": "83,68 ",
+      "lastPeriodValue": "162.7",
+      "tableDataGrbs": [
+         {
+            "name": "Министерство природных ресурсов, лесного хозяйства и экологии Пермского края",
+            "value": 2.0454545
+         },
+         {
+            "name": "Министерство культуры Пермского края",
+            "value": 0.5714286
+         },
+         {
+            "name": "Департамент образования администрации города Перми",
+            "value": 0.52910054
+         }
+      ],
+      "tableDataOrganization": [
+         {
+            "name": "ГКУ ПК \"ФХУ\"",
+            "value": 5.882353
+         },
+         {
+            "name": "МИНИСТЕРСТВО ЗДРАВООХРАНЕНИЯ ПЕРМСКОГО КРАЯ",
+            "value": 4.2016807
+         },
+         {
+            "name": "МИНПРИРОДЫ ПЕРМСКОГО КРАЯ",
+            "value": 3.902439
+         }
+      ]
+   }
+]
+
+3) Получение таблицы с одним показателем
+    GET /table?idMeasure=127&beginDate=2018-05-01&endDate=2018-06-30&filterGrbs=812&filterOrganisation=812.105778,812.182520,812.182535,816.182509
+    Ответ:
+    {
+        "name": "Доля заполненных показателей в карточке штатного сотрудника",
+        "idMeasure": 127,
+        "type": 1,
+        "nameValue": "Доля заполненных показателей в карточке штатного сотрудника",
+        "nameSubValue1": "Количество штатных сотрудников",
+        "nameSubValue2": "Заполнено штатным сотрудником",
+        "nameSubValue3": null,
+        "parents": [
+           {
+              "name": null,
+              "value": 0,
+              "subValue1": 0,
+              "subValue2": 0,
+              "subValue3": null,
+              "children": [
+                 {
+                    "name": "АДМИНИСТРАЦИЯ ГУБЕРНАТОРА ПЕРМСКОГО КРАЯ",
+                    "value": 0,
+                    "subValue1": 0,
+                    "subValue2": 0,
+                    "subValue3": null,
+                    "children": []
+                 }
+              ]
+           },
+           {
+              "name": "Министерство по управлению имуществом и земельным отношениям Пермского края",
+              "value": 96.723045,
+              "subValue1": 946,
+              "subValue2": 915,
+              "subValue3": null,
+              "children": [
+                 {
+                    "name": "ГКУ ПК \"ИМУЩЕСТВЕННОЕ КАЗНАЧЕЙСТВО ПЕРМСКОГО КРАЯ\"",
+                    "value": 94.117645,
+                    "subValue1": 34,
+                    "subValue2": 32,
+                    "subValue3": null,
+                    "children": []
+                 },
+                 {
+                    "name": "МИНИСТЕРСТВО ПО УПРАВЛЕНИЮ ИМУЩЕСТВОМ И ЗЕМЕЛЬНЫМ ОТНОШЕНИЯМ ПЕРМСКОГО КРАЯ",
+                    "value": 99.375,
+                    "subValue1": 160,
+                    "subValue2": 159,
+                    "subValue3": null,
+                    "children": []
+                 },
+                 {
+                    "name": "ГБУ \"ЦТИ ПК\"",
+                    "value": 96.276596,
+                    "subValue1": 752,
+                    "subValue2": 724,
+                    "subValue3": null,
+                    "children": []
+                 }
+              ]
+           },
+           {
+              "name": "Министерство природных ресурсов, лесного хозяйства и экологии Пермского края",
+              "value": 96.327385,
+              "subValue1": 953,
+              "subValue2": 918,
+              "subValue3": null,
+              "children": [
+                 {
+                    "name": "МИНПРИРОДЫ ПЕРМСКОГО КРАЯ",
+                    "value": 97.23502,
+                    "subValue1": 434,
+                    "subValue2": 422,
+                    "subValue3": null,
+                    "children": []
+                 },
+                 {
+                    "name": "ГКУ ПК \"ПЕРМОХОТА\"",
+                    "value": 91.489365,
+                    "subValue1": 94,
+                    "subValue2": 86,
+                    "subValue3": null,
+                    "children": []
+                 },
+                 {
+                    "name": "СГБУ \"ПЕРМСКИЙ ЛЕСОПОЖАРНЫЙ ЦЕНТР\"",
+                    "value": 96.47059,
+                    "subValue1": 425,
+                    "subValue2": 410,
+                    "subValue3": null,
+                    "children": []
+                 }
+              ]
+           },
+           ...
+        ]
+    }
+
+4) Получение таблицы со всеми показателями
+    POST /table?idMeasure=127&beginDate=2018-05-01&endDate=2018-06-30&filterGrbs=812&filterOrganisation=812.105778,812.182520,812.182535,816.182509
+
+    Ответ:
+{
+   "beginDate": [
+      2018,
+      5,
+      1
+   ],
+   "endDate": [
+      2018,
+      6,
+      30
+   ],
+    "tables": [
+         {
+            "name": "Доля заполненных показателей в карточке штатного сотрудника",
+            "idMeasure": 127,
+            "type": 1,
+            "nameValue": "Доля заполненных показателей в карточке штатного сотрудника",
+            "nameSubValue1": "Количество штатных сотрудников",
+            "nameSubValue2": "Заполнено штатным сотрудником",
+            "nameSubValue3": null,
+            "parents": [
+               {
+                  "name": null,
+                  "value": 0,
+                  "subValue1": 0,
+                  "subValue2": 0,
+                  "subValue3": null,
+                  "children": [
+                     {
+                        "name": "АДМИНИСТРАЦИЯ ГУБЕРНАТОРА ПЕРМСКОГО КРАЯ",
+                        "value": 0,
+                        "subValue1": 0,
+                        "subValue2": 0,
+                        "subValue3": null,
+                        "children": []
+                     }
+                  ]
+               },
+               {
+                  "name": "Министерство по управлению имуществом и земельным отношениям Пермского края",
+                  "value": 96.723045,
+                  "subValue1": 946,
+                  "subValue2": 915,
+                  "subValue3": null,
+                  "children": [
+                     {
+                        "name": "ГКУ ПК \"ИМУЩЕСТВЕННОЕ КАЗНАЧЕЙСТВО ПЕРМСКОГО КРАЯ\"",
+                        "value": 94.117645,
+                        "subValue1": 34,
+                        "subValue2": 32,
+                        "subValue3": null,
+                        "children": []
+                     },
+                     {
+                        "name": "МИНИСТЕРСТВО ПО УПРАВЛЕНИЮ ИМУЩЕСТВОМ И ЗЕМЕЛЬНЫМ ОТНОШЕНИЯМ ПЕРМСКОГО КРАЯ",
+                        "value": 99.375,
+                        "subValue1": 160,
+                        "subValue2": 159,
+                        "subValue3": null,
+                        "children": []
+                     },
+                     {
+                        "name": "ГБУ \"ЦТИ ПК\"",
+                        "value": 96.276596,
+                        "subValue1": 752,
+                        "subValue2": 724,
+                        "subValue3": null,
+                        "children": []
+                     }
+                  ]
+               },
+               {
+                  "name": "Министерство природных ресурсов, лесного хозяйства и экологии Пермского края",
+                  "value": 96.327385,
+                  "subValue1": 953,
+                  "subValue2": 918,
+                  "subValue3": null,
+                  "children": [
+                     {
+                        "name": "МИНПРИРОДЫ ПЕРМСКОГО КРАЯ",
+                        "value": 97.23502,
+                        "subValue1": 434,
+                        "subValue2": 422,
+                        "subValue3": null,
+                        "children": []
+                     },
+                     {
+                        "name": "ГКУ ПК \"ПЕРМОХОТА\"",
+                        "value": 91.489365,
+                        "subValue1": 94,
+                        "subValue2": 86,
+                        "subValue3": null,
+                        "children": []
+                     },
+                     {
+                        "name": "СГБУ \"ПЕРМСКИЙ ЛЕСОПОЖАРНЫЙ ЦЕНТР\"",
+                        "value": 96.47059,
+                        "subValue1": 425,
+                        "subValue2": 410,
+                        "subValue3": null,
+                        "children": []
+                     }
+                  ]
+               },
+               ...
+         },
+         {
+              "name": "Количество заполненных показателей в карточке сотрудников",
+              "idMeasure": 128,
+              "type": 4,
+              "nameValue": "Количество заполненных показателей в карточке сотрудников",
+              "nameSubValue1": null,
+              "nameSubValue2": null,
+              "nameSubValue3": null,
+              "parents": [
+                 {
+                    "name": null,
+                    "value": 1216,
+                    "subValue1": null,
+                    "subValue2": null,
+                    "subValue3": null,
+                    "children": [
+                       {
+                          "name": "ГКУ ПК \"ИМУЩЕСТВЕННОЕ КАЗНАЧЕЙСТВО ПЕРМСКОГО КРАЯ\"",
+                          "value": 34,
+                          "subValue1": null,
+                          "subValue2": null,
+                          "subValue3": null,
+                          "children": []
+                       },
+                       {
+                          "name": "МИНИСТЕРСТВО ПО УПРАВЛЕНИЮ ИМУЩЕСТВОМ И ЗЕМЕЛЬНЫМ ОТНОШЕНИЯМ ПЕРМСКОГО КРАЯ",
+                          "value": 185,
+                          "subValue1": null,
+                          "subValue2": null,
+                          "subValue3": null,
+                          "children": []
+                       },
+                       {
+                          "name": "ГБУ \"ЦТИ ПК\"",
+                          "value": 997,
+                          "subValue1": null,
+                          "subValue2": null,
+                          "subValue3": null,
+                          "children": []
+                       }
+                    ]
+                 },
+                 {
+                    "name": "Министерство природных ресурсов, лесного хозяйства и экологии Пермского края",
+                    "value": 973,
+                    "subValue1": null,
+                    "subValue2": null,
+                    "subValue3": null,
+                    "children": [
+                       {
+                          "name": "МИНПРИРОДЫ ПЕРМСКОГО КРАЯ",
+                          "value": 448,
+                          "subValue1": null,
+                          "subValue2": null,
+                          "subValue3": null,
+                          "children": []
+                       },
+                       {
+                          "name": "ГКУ ПК \"ПЕРМОХОТА\"",
+                          "value": 94,
+                          "subValue1": null,
+                          "subValue2": null,
+                          "subValue3": null,
+                          "children": []
+                       },
+                       {
+                          "name": "СГБУ \"ПЕРМСКИЙ ЛЕСОПОЖАРНЫЙ ЦЕНТР\"",
+                          "value": 431,
+                          "subValue1": null,
+                          "subValue2": null,
+                          "subValue3": null,
+                          "children": []
+                       }
+                    ]
+                 },
+                 ...
+         }
+     ]
+}
+
+5) Получение списка избранных панелей по id пользователя
+   GET /favorite/1
+   Ответ:
+[
+   {
+      "favoriteMeasureId": 1,
+      "userId": 1,
+      "measureId": 141,
+      "beginDate": [
+         2018,
+         5,
+         1
+      ],
+      "endDate": [
+         2018,
+         6,
+         30
+      ]
+   },
+   {
+      "favoriteMeasureId": 2,
+      "userId": 1,
+      "measureId": 101,
+      "beginDate": [
+         2018,
+         5,
+         1
+      ],
+      "endDate": [
+         2018,
+         5,
+         30
+      ]
+   },
+   {
+      "favoriteMeasureId": 3,
+      "userId": 1,
+      "measureId": 100,
+      "beginDate": [
+         2018,
+         5,
+         1
+      ],
+      "endDate": [
+         2018,
+         6,
+         29
+      ]
+   }
+]
+
+6) Получение иерархии всех показателей
+   GET /hierarchy
+   Ответ:
+[
+   {
+      "idCube": 17,
+      "nameCube": "Статистика по полноте заполнения карточки сотрудника",
+      "measures": [
+         {
+            "idMeasure": 127,
+            "nameMeasure": "Доля заполненных показателей в карточке штатного сотрудника"
+         },
+         {
+            "idMeasure": 129,
+            "nameMeasure": "Доля заполненных показателей в карточке сотрудников"
+         },
+         {
+            "idMeasure": 128,
+            "nameMeasure": "Количество заполненных показателей в карточке сотрудников"
+         },
+         {
+            "idMeasure": 133,
+            "nameMeasure": "Заполнено штатным сотрудником"
+         },
+         {
+            "idMeasure": 132,
+            "nameMeasure": "Заполнено сотрудником"
+         },
+         {
+            "idMeasure": 131,
+            "nameMeasure": "Количество штатных сотрудников "
+         },
+         {
+            "idMeasure": 130,
+            "nameMeasure": "Количество сотрудников"
+         }
+      ]
+   },
+   {
+      "idCube": 4,
+      "nameCube": "Сведения об оказанной высокотехнологичной медицинской помощи",
+      "measures": [
+         {
+            "idMeasure": 17,
+            "nameMeasure": "Исполненные объемы ВМП"
+         },
+         {
+            "idMeasure": 18,
+            "nameMeasure": "Исполненная стоимость ВМП"
+         },
+         {
+            "idMeasure": 19,
+            "nameMeasure": "Средняя стоимость одной госпитализации"
+         },
+         {
+            "idMeasure": 20,
+            "nameMeasure": "Общая длительность лечения"
+         },
+         {
+            "idMeasure": 21,
+            "nameMeasure": "Средняя длительность лечения"
+         },
+         {
+            "idMeasure": 41,
+            "nameMeasure": "Исполненные объемы ВМП с начала года"
+         },
+         {
+            "idMeasure": 42,
+            "nameMeasure": "Исполненная стоимость ВМП с начала года"
+         },
+         {
+            "idMeasure": 43,
+            "nameMeasure": "Средняя стоимость одной госпитализации с начала года"
+         },
+         {
+            "idMeasure": 44,
+            "nameMeasure": "Общая длительность лечения с начала года"
+         },
+         {
+            "idMeasure": 45,
+            "nameMeasure": "Средняя длительность лечения с начала года"
+         },
+         {
+            "idMeasure": 56,
+            "nameMeasure": "Доля исполненных объемов ВМП"
+         },
+         {
+            "idMeasure": 57,
+            "nameMeasure": "Доля исполненной стоимости ВМП"
+         }
+      ]
+   },
+   ...
+]
+
+
+6) Получение списка панелей куба
+   GET /cubePanels?idCube=17&beginDate=2018-05-01&endDate=2018-06-30&filterGrbs=812&filterOrganisation=812.105778,812.182520,812.182535,816.182509
+   Ответ:
+[
+    {
+        "name": "Доля заполненных показателей в карточке штатного сотрудника",
+        "idMeasure": 127,
+        "beginDate": null,
+        "endDate": null,
+        "type": 1,
+        "value": "79 %",
+        "subValue": "33460 Человек",
+        "changePercentValue": "0,00",
+        "lastPeriodValue": "79 %",
+        "tableDataGrbs": [
+            {
+                "name": "Департамент образования администрации города Перми",
+                "value": 892.1076
+            },
+            {
+                "name": "Министерство физической культуры, спорта и туризма Пермского края",
+                "value": 100
+            },
+            {
+                "name": "Министерство природных ресурсов, лесного хозяйства и экологии Пермского края",
+                "value": 95.39749
+            }
+        ],
+        "tableDataOrganization": [
+            {
+                "name": "МАУ ДО ЦДТ \"ЮНОСТЬ\" Г.ПЕРМИ",
+                "value": 195.4023
+            },
+            {
+                "name": "МБОУ \"ШКОЛА-ИНТЕРНАТ № 4 ДЛЯ ОБУЧАЮЩИХСЯ С ОГРАНИЧЕННЫМИ ВОЗМОЖНОСТЯМИ ЗДОРОВЬЯ\" Г.ПЕРМИ",
+                "value": 195
+            },
+            {
+                "name": "ДЕПАРТАМЕНТ ОБРАЗОВАНИЯ АДМИНИСТРАЦИИ ГОРОДА ПЕРМИ",
+                "value": 173.25519
+            }
+        ]
+    },
+    ...
+]

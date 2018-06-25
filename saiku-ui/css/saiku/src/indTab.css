@@ -1,0 +1,405 @@
+.ind_header {
+	width: 100%;
+	height: 100px;
+	padding: 40px 20px 20px 20px;
+}
+
+input.ind_search {
+	width: 228px;
+	height: 35px;
+	outline: none;
+	border: 1px solid #d7d7d7;
+	padding-left: 30px;
+	font-family: Segoe Regular;
+	vertical-align: top;
+	background: #F5F8F8;
+	margin-right: 25px;
+}
+
+label.ind_header_label {
+	font-size: 20px;
+	font-family: Segoe Semibold;
+	margin-left: 23PX;
+}
+
+div#indicators_tab_content {
+	width: 100%;
+	height: 100%;
+	font-family: Segoe Regular;
+}
+
+.ind_date_period_block {
+	float: right;
+}
+
+.ind_date_period_block > label {
+	margin-right: 20px;
+}
+
+.ind_search_icon {
+	background: url(../../../images/redesign/search.png) no-repeat;
+	width: 16px;
+	height: 14px;
+	display: inline-block;
+	position: relative;
+	left: 25px;
+	top: 3px;
+}
+
+.ind_content {
+	height: calc(100% - 100px);
+}
+
+.ind_tree {
+	height: 100%;
+	width: 300px;
+	float: left;
+	padding: 20px;
+	color: #1EB0D5;
+	font-family: Segoe Semibold;
+	font-size: 13px;
+	overflow-y: auto;
+}
+
+.ind_panels,
+.ind_table {
+	height: 100%;
+	width: calc(100% - 300px);
+	float: right;
+}
+
+.ind_table {
+	padding: 20px;
+}
+
+.ind_panels_container {
+	height: 100%;
+	display: grid;
+	grid-template-columns: 783px 783px;
+	grid-auto-rows: 423px;
+	grid-gap: 1em;
+	padding: 0 10px 0 10px;
+	overflow-y: auto;
+}
+
+.ind_table_content {
+	padding: 61px 20px 20px 20px;
+	background: #fff;
+	width: 100%;
+	position:  relative;
+	height: 100%;
+	box-shadow: 0 0 8px -1px rgb(187, 187, 187);
+}
+
+.ind_panel {
+	border: 1px solid lightgray;
+	background: #fff;
+	box-shadow: 0 0 8px -1px rgb(187, 187, 187);
+	display: grid;
+	grid-template-columns: auto;
+	grid-template-rows: 4em auto;
+}
+
+.ind_panel_header {
+	display: grid;
+	grid-template-columns: 10fr 2fr;
+}
+
+.ind_panel_caption {
+	font-family: "Segoe UI Semibold";
+	font-size: 18px;
+	align-self: center;
+	padding-left: 29px;
+}
+
+.ind_panel_favourite_switcher_icon {
+	align-self: center;
+	justify-self: right;
+	background: url(../../../images/redesign/favorites.png) no-repeat;
+	width: 15px;
+	height: 14px;
+	padding-right: 25px;
+	cursor: pointer;
+}
+
+.ind_panel_favourite_switcher_icon:hover {
+	background: url(../../../images/redesign/favorites2.png) no-repeat;
+}
+
+.ind_panel_favourite_switcher_icon:active {
+	background: url(../../../images/redesign/favorites3.png) no-repeat;
+}
+
+.ind_panel_body {
+	display: grid;
+	/*grid-template-columns: 322px 461px;*/
+	grid-template-columns: auto;
+	grid-template-rows: auto;
+}
+
+.ind_panel_diagram {
+	align-self: center;
+	justify-self: center;
+}
+
+.ind_panel_indicators {
+	display: grid;
+	grid-template-columns: 8fr 2fr;
+	grid-template-rows: 37px 37px 37px 37px 27px 37px 37px 37px 37px;
+	padding: 0 25px 0 29px;
+}
+
+/*.ind_panel_indicators > div:nth-child(even) {*/
+	/*background-color: rgba(236, 239, 242, 0.8);*/
+/*}*/
+
+.ind_panel_indicators_caption {
+	grid-column: 1/3;
+	align-self: end;
+	font-family: Segoe Bold;
+	font-size: 13px;
+	text-overflow: ellipsis;
+	white-space: nowrap;
+	overflow: hidden;
+}
+
+.ind_panel_indicators_item_name {
+	font-family: Segoe UI;
+	font-size: 13px;
+	align-self: center;
+	text-overflow: ellipsis;
+	white-space: nowrap;
+	overflow: hidden;
+}
+
+.ind_panel_indicators_item_value {
+	font-family: Segoe Semibold;
+	font-size: 18px;
+	align-self: center;
+	justify-self: right;
+}
+
+.ind_panel_item_gray {
+	background-color: rgba(236, 239, 242, 0.8);
+}
+
+label.all_inds {
+	font-family: Segoe Semibold;
+	width: 100%;
+}
+
+label.favourites {
+	font-family: Segoe Semibold;
+	padding-left: 20px;
+	padding-top: 10px;
+	cursor: pointer;
+}
+
+.ind_under_fav_line {
+	height: 1px;
+	width: 100%;
+	background: #d7d7d7;
+	position: relative;
+}
+
+.ind_tree_cube {
+}
+
+.ind_tree_ind {
+	padding: 10px 0 10px 20px;
+	height: 35px;
+	display: none;
+}
+
+.ind_tree_ind.active {
+	color: #343a40;
+}
+
+.ind_tree_cube__label {
+	padding: 10px 0 10px 0;
+	position:  relative;
+	cursor:  pointer;
+}
+
+.ind_tree_cube__label.active {
+	color: #343a40;
+}
+
+.ind_tree_cube.expanded .ind_tree_ind {
+	display: inline-block;
+	cursor: pointer;
+}
+
+
+.ind_tree_cube > div > div {
+	background: url(../../../images/redesign/listMenu.png) no-repeat center;
+	width: 30px;
+	height: 30px;
+	position:  absolute;
+	top: 7px;
+	right: -6px;
+	cursor:pointer
+}
+
+.ind_tree_cube > div > div:hover {
+	background: url(../../../images/redesign/listMenu2.png) no-repeat center;
+}
+
+
+.ind_tree_cube.active > div > div {
+	background: url(../../../images/redesign/listMenu3.png) no-repeat center;
+}
+
+
+.favourites.active{
+	color:  #343a40;
+
+}
+
+
+.ind_table_header {
+	height: 41px;
+	padding: 10px 0 0 20px;
+	color: #828F9D;
+	font-family: Segoe Bold;
+	position:  absolute;
+	width:  100%;
+	top: 20px;
+}
+
+.ind_table_header > label:first-child {
+	width: calc(45% + -60px);
+}
+
+.ind_table_row {
+	width: 100%;
+	height: auto;
+}
+
+.ind_table_cube_row {
+	height:  41px;
+	padding-left:  46px;
+	border-bottom:  1px solid #e6e6e6;
+	padding-top: 8px;
+	border-right: 1px solid #e6e6e6;
+	border-left: 1px solid #e6e6e6;
+	cursor:  pointer;
+	position:  relative;
+}
+
+he {}
+
+.ind_table_ind {
+	height:  41px;
+	background:  #FBFCFC;
+	padding-top: 8px;
+	width:  100%;
+	display:  none;
+	border-right: 1px solid #e6e6e6;
+	border-left: 1px solid #e6e6e6;
+	padding-left:  46px;
+	border-bottom:  1px solid #e6e6e6;
+}
+
+.ind_table_row.expanded .ind_table_ind {
+	display:  inline-block;
+}
+
+label.ind_table_ind_name {
+	width: calc(45% + 58px);
+}
+
+label.ind_table_cube_name {
+	width: calc(45% + 58px);
+}
+
+.ind_table_header > label {
+	display:  inline-block;
+}
+
+
+.ind_table_rows {
+	overflow:  auto;
+	height:  100%;
+}
+
+
+.ind_table_row:first-child > .ind_table_cube_row {
+	border-top: 1px solid #e6e6e6;
+}
+
+
+
+.ind_table_cube_row > label {
+	cursor:  pointer;
+}
+
+.ind_table_row.expanded .ind_table_cube_row > label {
+	color: #1EB0D5;
+}
+
+
+.ind_table_expand_arrow {
+	background: url(../../../images/redesign/listMenu.png) no-repeat center;
+	width: 30px;
+	height: 30px;
+	position:  absolute;
+	top: 4px;
+	left: 8px;
+	cursor:pointer;
+}
+
+.ind_table_expand_arrow:hover {
+	background: url(../../../images/redesign/listMenu2.png) no-repeat center;
+}
+
+.ind_table_row.expanded .ind_table_expand_arrow {
+	background: url(../../../images/redesign/listMenu3.png) no-repeat center;
+}
+
+
+.ind_table_ind_row {
+	position:  relative;
+	width:  100%;
+}
+
+.ind_table_ind_chart {
+	display:  inline-block;
+	width: calc(55% - 242px);
+	padding-left: 20px;
+	vertical-align:  top;
+	/* height:  20px; */
+}
+
+.ind_table_ind_chart > div {
+	width: 100%;
+	height: 20px;
+	background:  linear-gradient(to right, rgba(48,148,227,1) 0%,rgba(34,199,214,1) 100%);
+	border-radius: 5px;
+}
+
+.ind_table_cube_chart {
+	display:  inline-block;
+	width: calc(55% - 242px);
+	padding-left: 20px;
+	vertical-align:  top;
+	/* height:  20px; */
+}
+
+.ind_table_cube_chart > div {
+	width: 100%;
+	height: 20px;
+	background:  linear-gradient(to right, rgba(48,148,227,1) 0%,rgba(34,199,214,1) 100%);
+	border-radius: 5px;
+}
+
+
+label.ind_table_ind_value {
+	width:  100px;
+	text-align:  right;
+}
+
+label.ind_table_cube_value {
+	width: 100px;
+	text-align: right;
+}

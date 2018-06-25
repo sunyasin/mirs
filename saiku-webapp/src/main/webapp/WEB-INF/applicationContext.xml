@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:context="http://www.springframework.org/schema/context"
+       xmlns:tx="http://www.springframework.org/schema/tx"
+       xmlns:jpa="http://www.springframework.org/schema/data/jpa"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans
+       http://www.springframework.org/schema/beans/spring-beans.xsd
+        http://www.springframework.org/schema/context
+        http://www.springframework.org/schema/context/spring-context.xsd
+        http://www.springframework.org/schema/beans
+        http://www.springframework.org/schema/beans/spring-beans.xsd
+        http://www.springframework.org/schema/tx
+        http://www.springframework.org/schema/tx/spring-tx.xsd
+        http://www.springframework.org/schema/data/jpa
+        http://www.springframework.org/schema/data/jpa/spring-jpa.xsd">
+
+     <context:annotation-config/>
+     <context:component-scan base-package="org.saiku" />
+     <import resource="applicationContext-saiku.xml"/>
+     <import resource="saiku-beans.xml"/>
+     <import resource="spring-servlet.xml"/>
+
+     <bean id="txManager" class="org.springframework.orm.jpa.JpaTransactionManager">
+          <property name="entityManagerFactory" ref="entityManagerFactory" />
+     </bean>
+
+     <tx:annotation-driven transaction-manager="txManager" />
+
+     <jpa:repositories base-package="org.saiku.database.repository"
+                       entity-manager-factory-ref="entityManagerFactory"
+                       transaction-manager-ref="txManager" />
+
+     <bean id="entityManagerFactory" class="org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean">
+          <property name="persistenceUnitName" value="emf" />
+          <property name="dataSource" ref="olapDataSource" />
+
+          <property name="packagesToScan">
+               <list>
+                    <value>org.saiku.database.entity.report</value>
+               </list>
+          </property>
+
+          <property name="jpaVendorAdapter">
+               <bean class="org.springframework.orm.jpa.vendor.HibernateJpaVendorAdapter">
+                    <property name="generateDdl" value="false" />
+                    <property name="databasePlatform" value="org.hibernate.dialect.SQLServer2012Dialect" />
+               </bean>
+          </property>
+          <property name="jpaPropertyMap">
+               <map>
+                    <entry key="hibernate.show_sql" value="true" />
+                    <entry key="hibernate.format_sql" value="true" />
+                    <entry key="hibernate.use_sql_comments" value="true" />
+                    <entry key="hibernate.temp.use_jdbc_metadata_defaults" value="false" />
+                    <entry key="hibernate.connection.autocommit" value="false" />
+
+                    <entry key="hibernate.max_fetch_depth" value="3" />
+                    <entry key="hibernate.jdbc.fetch_size" value="500" />
+
+                    <!--<entry key="hibernate.proc.param_null_passing" value="true" />-->
+               </map>
+          </property>
+     </bean>
+
+     <!-- перенес в отдельный модуль fact-loader
+          <task:annotation-driven executor="executor" scheduler="scheduler"/>
+          <task:executor id="executor" pool-size="10"/>
+          <task:scheduler id="scheduler" pool-size="10"/>
+          <task:scheduled-tasks scheduler="scheduler">
+               <task:scheduled ref="periodicalWorkerBean" method="loadIndicators" cron="*/30 * * * * ?"/>
+               <task:scheduled ref="periodicalWorkerBean" method="loadFactBuh" cron="*/30 * * * * ?"/>
+               <task:scheduled ref="periodicalWorkerBean" method="loadDaily" cron="*/30 * * * * ?"/>
+               <task:scheduled ref="periodicalWorkerBean" method="updateOrganizations" cron="*/30 * * * * ?"/>
+               <task:scheduled ref="periodicalWorkerBean" method="loadOrganizations" cron="*/5 * * * * ?" />
+          </task:scheduled-tasks>
+          <bean id="periodicalWorkerBean" class="org.saiku.service.loader.PeriodicWorker"></bean>
+     -->
+
+</beans>

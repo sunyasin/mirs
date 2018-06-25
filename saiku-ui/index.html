@@ -1,0 +1,1363 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+	<meta http-equiv="cache-control" content="max-age=0"/>
+	<meta http-equiv="cache-control" content="no-cache"/>
+	<meta http-equiv="expires" content="0"/>
+	<meta http-equiv="expires" content="Tue, 01 Jan 1980 1:00:00 GMT"/>
+	<meta http-equiv="pragma" content="no-cache"/>
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+
+	<title>OLAP</title>
+
+	<!--[if lt IE 9]>
+	<script type="text/javascript" src="js/svgweb/svg.js" data-path="js/svgweb/"></script><![endif]-->
+	<meta name="svg.render.forceflash" content="true">
+
+	<link rel="stylesheet" href="css/saiku/src/bootstrap.css"/>
+	<!-- Blueprint CSS -->
+	<link rel="stylesheet" href="js/tourist/tourist.css" type="text/css">
+	<link rel="stylesheet" href="js/qtip/jquery.qtip.min.css" type="text/css"/>
+
+	<!--  jQuery CSS -->
+	<link rel="stylesheet" href="css/jquery/spectrum.css" type="text/css" media="all"/>
+	<link rel="stylesheet" href="css/jquery/jquery-ui.css" type="text/css" media="all"/>
+	<link rel="stylesheet" href="css/saiku/src/giveitsomestyle.css" type="text/css" media="screen"/>
+	<link rel="stylesheet" href="js/fancybox/jquery.fancybox.css" type="text/css" media="screen"/>
+	<link rel="stylesheet" href="js/jquery/jquery.contextMenu.css" type="text/css" media="screen"/>
+	<!-- Saiku CSS -->
+	<link rel="stylesheet" href="css/saiku/src/styles.css" type="text/css">
+	<link rel="stylesheet" href="css/saiku/src/saiku.table.css" type="text/css">
+	<link rel="stylesheet" href="css/saiku/src/analysisStyles.css" type="text/css">
+	<link rel="stylesheet" href="css/saiku/src/indicatorsStyles.css" type="text/css">
+	<link rel="stylesheet" href="css/saiku/src/indTab.css" type="text/css">
+	<!--<link rel="stylesheet" href="js/saiku-vue/indicators/indicators.css" type="text/css">-->
+	<link rel="stylesheet" href="css/saiku/src/reportsStyles.css" type="text/css">
+	<link rel="stylesheet" href="css/saiku/src/saiku.dropzone.css" type="text/css">
+
+	<!-- CHOSEN CSS PLACEHOLDER-->
+
+	<link rel="shortcut icon" href="favicon.png">
+
+</head>
+<body>
+<div id="that_browser_not_support" class="hide">
+	<div class="that_browser_not_support_modal">
+		<div class="alert_image"></div>
+		<div>Используемый веб-браузер может быть несовместим с функциональностью веб-приложения!
+			<br>Возможно некорректное отображение страниц, блокировка функциональных возможностей приложения<br><br>
+			Для корректной работы приложения используйте браузеры: Google Chrome, Яндекс.Браузер последней версии.
+		</div>
+	</div>
+</div>
+<script>
+	var browserNotSupport = document.getElementById("that_browser_not_support");
+	if (!(!!window.chrome && !!window.chrome.webstore)) {
+		browserNotSupport.className = ""
+	}
+</script>
+<div id="loader" class="loader"></div>
+
+
+<div id="header" class="hide" style="display:none">
+	<script>
+		var Loader = {};
+		Loader.on = function () {
+			$('#loader').removeClass("hide");
+		};
+		Loader.off = function () {
+			$('#loader').addClass("hide");
+		};
+
+		function goBackToIndicators() {
+			$("#header").find(".tabs ul li:nth-child(2) > span").click();
+			SchemaConfigGlobal.reportName = null;
+			$(".go_back_to_indicators").removeClass("shown");
+			var contetntTab = $("#tab_panel");
+
+			contetntTab.removeClass("fix_height_by75");
+			contetntTab.removeClass("round_tab");
+
+			//если были открыты отчеты то возвращаемся к ним
+			// if ($(".olap_header__button.right_button")[0].classList.contains("active")) {
+			// 	Loader.on();
+			// 	SchemaConfigGlobal.renderReports().then(function () {
+			// 		Loader.off();
+			// 		SchemaConfigGlobal.reportName = null;
+			// 		$("#tab_panel").removeClass("round_tab");
+			// 		SchemaConfigGlobal.showMyReports();
+			// 		$('.full_page_form.indicators_form').addClass("hide");
+			// 		$('.full_page_form.reports_form').removeClass("hide");
+			// 		$('.olap_header__button.left_button').removeClass("active");
+			// 		$('.olap_header__button.right_button').addClass("active");
+			// 		SchemaConfigGlobal.updateSelectedCount();
+			// 		SchemaConfigGlobal.updateShowCount();
+			// 	});
+			// }
+		}
+
+		function goBackToReports(){
+			$('.reports_button').click();
+			$(this).removeClass('shown');
+		}
+
+		function logout() {
+			Saiku.session.logout();
+		}
+	</script>
+	<!--<div id="headerNavigation" class="header_navigation">-->
+	<!--<div class="dimensions_header__go_back" onclick="goBackToIndicators()">-->
+	<!--<div>&larr;</div>-->
+	<!--Список показателей-->
+	<!--</div>-->
+	<!--</div>-->
+	<div id='top_nagivation_block' class='olap_header'>
+		<div class='olap_header_top_logo'>
+			<div class='main_logo_in_corner'></div>
+			<div class='main_caption'>
+				ЕДИНАЯ ИНФОРМАЦИОННАЯ СИСТЕМА<br>
+				УПРАВЛЕНИЯ ФИНАНСОВО-ХОЗЯЙСТВЕННОЙ ДЕЯТЕЛЬНОСТЬЮ ОРГАНИЗАЦИЙ<br>
+				ГОСУДАРСТВЕННОГО СЕКТОРА ПЕРМСКОГО КРАЯ
+				<div class='last_row'>АНАЛИТИЧЕСКАЯ ПАНЕЛЬ</div>
+			</div>
+		</div>
+		<div class='olap_header__block'>
+			<div class='olap_header__button indicators_button'>
+				<div class="vm_indicators_icon"></div>
+				ИНДИКАТОРЫ
+			</div>
+			<div class='olap_header__button analyze_button active'>
+				<div class="vm_analyz_icon"></div>
+				АНАЛИЗ
+			</div>
+			<div class='olap_header__button reports_button'>
+				<div class="vm_reports_icon"></div>
+				МОИ ОТЧЕТЫ
+			</div>
+
+			<div id='logout_block'>
+				<label id='logout_label'>admin</label>
+				<button id="logout_btn" class="indicators_header__buttons_box__button img_into_button clear_button">
+					<div onclick="logout()"></div>
+				</button>
+			</div>
+		</div>
+		<div class="go_back_to_indicators" onclick="goBackToIndicators()">
+			<div class="go_back_to_indicators__img"></div>
+			Список показателей
+		</div>
+		<div class="go_back_to_reports" onclick="goBackToReports()">
+			<div class="go_back_to_reports__img"></div>
+			Список отчетов
+		</div>
+	</div>
+
+
+</div>
+
+<div class="processing_container"></div>
+<div class="processing">
+	<div class="processing_inner">
+		<span class="saiku_logo">&nbsp;</span>
+		<div class="processing_content">
+			<span class="processing_image">&nbsp;</span>
+			<span class="processing_message i18n">Loading...</span>
+		</div>
+	</div>
+</div>
+
+<!--
+<script type="text/javascript" src="//www.google.com/jsapi" defer></script>
+<script src="//maps.googleapis.com/maps/api/js?v=3.exp&signed_in=true&libraries=visualization&sensor=false&callback=initialize" defer></script>
+<link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/leaflet/0.7.3/leaflet.css">
+<script src="//cdnjs.cloudflare.com/ajax/libs/leaflet/0.7.3/leaflet.js"></script>
+-->
+
+<!--MAP PLACEHOLDER-->
+
+<!--  jQuery 1.7.2 , jQuery UI 1.8.14-->
+
+<script src="js/jquery/jquery.min.js" type="text/javascript"></script>
+<script src="js/jquery/jquery-ui.min.js" type="text/javascript"></script>
+<script src="js/jquery/jquery.contextMenu.js" type="text/javascript"></script>
+<script src="js/jquery/jquery-mobile-touch.js" type="text/javascript"></script>
+<script type="text/javascript" src="js/jquery/jquery.blockUI.js"></script>
+<script type="text/javascript" src="js/jquery/spectrum.js"></script>
+
+<script type="text/javascript" src="js/fancybox/jquery.fancybox.pack.js"></script>
+
+
+<!--Vue.js-->
+<!--<script src="https://cdn.jsdelivr.net/npm/vue@2.5.16/dist/vue.js"></script>-->
+<script src="js/vue/vue.js"></script>
+
+
+<!--Vue scripts-->
+<!--<script src="js/saiku-vue/indicators/indicators.js"></script>-->
+<!-- CHOSEN PLACEHOLDER -->
+<script type="text/javascript">
+
+	// Replace the normal jQuery getScript function with one that supports
+	// debugging and which references the script files as external resources
+	// rather than inline.
+	jQuery.extend({
+		getScript: function (url, callback) {
+			var head = document.getElementsByTagName("head")[0];
+			var script = document.createElement("script");
+			script.src = url;
+
+			// Handle Script loading
+			{
+				var done = false;
+
+				// Attach handlers for all browsers
+				script.onload = script.onreadystatechange = function () {
+					if (!done && (!this.readyState ||
+							this.readyState == "loaded" || this.readyState == "complete")) {
+						done = true;
+						if (callback)
+							callback();
+
+						// Handle memory leak in IE
+						script.onload = script.onreadystatechange = null;
+					}
+				};
+			}
+
+			head.appendChild(script);
+
+			// We handle everything using the script element injection
+			return undefined;
+		}
+	});
+
+
+</script>
+<!-- Backbone.js and deps -->
+
+<script type="text/javascript" src="js/backbone/underscore.js"></script>
+<script type="text/javascript" src="js/backbone/json2.js"></script>
+<script type="text/javascript" src="js/backbone/backbone.js"></script>
+<script src="js/backbone/backbone-model-file-upload.js"></script>
+<script src="js/notify/notify.min.js"></script>
+<script src="js/fitvids/jquery.fitvids.js"></script>
+<script src="js/notify/styles/bootstrap/notify-bootstrap.js"></script>
+<script src="js/qtip/imagesloaded.pkg.min.js"></script>
+<script src="js/qtip/jquery.qtip.min.js"></script>
+<script type="text/javascript" src="js/tourist/tourist.js"></script>
+<!-- Loggly error logging service -->
+<script type="text/javascript" src="js/logger/janky.post.min.js"></script>
+<script type="text/javascript" src="js/logger/Logger.js" defer></script>
+
+<!-- D3 Library -->
+<script src="http://d3js.org/d3.v3.min.js"></script>
+
+<!-- Saiku Project -->
+<script type="text/javascript" src="js/saiku/Settings.js"></script>
+
+<!-- CUT HERE -->
+<script type="text/javascript" src="js/saiku/models/SaikuOlapQuery.js"></script>
+<script type="text/javascript" src="js/saiku/models/DateFilter.js"></script>
+<script type="text/javascript" src="js/saiku/models/Level.js"></script>
+<script type="text/javascript" src="js/saiku/render/SaikuRenderer.js"></script>
+<script type="text/javascript" src="js/saiku/render/SaikuTableRenderer.js"></script>
+<script type="text/javascript" src="js/saiku/render/SaikuChartRenderer.js"></script>
+<script type="text/javascript" src="js/saiku/models/Dimension.js"></script>
+<script type="text/javascript" src="js/saiku/views/DimensionList.js"></script>
+<script type="text/javascript" src="js/saiku/views/Toolbar.js"></script>
+<script type="text/javascript" src="js/saiku/views/Upgrade.js"></script>
+<script type="text/javascript" src="js/saiku/views/Modal.js"></script>
+<script type="text/javascript" src="js/saiku/views/MDXModal.js"></script>
+<script type="text/javascript" src="js/saiku/views/SelectionsModal.js"></script>
+<script type="text/javascript" src="js/saiku/views/DrillthroughModal.js"></script>
+<script type="text/javascript" src="js/saiku/views/DrillAcrossModal.js"></script>
+<script type="text/javascript" src="js/saiku/views/PermissionsModal.js"></script>
+<script type="text/javascript" src="js/saiku/views/DemoLoginForm.js"></script>
+<script type="text/javascript" src="js/saiku/views/LoginForm.js"></script>
+<script type="text/javascript" src="js/saiku/views/AboutModal.js"></script>
+<script type="text/javascript" src="js/saiku/views/OverwriteModal.js"></script>
+<script type="text/javascript" src="js/saiku/views/AddFolderModal.js"></script>
+<script type="text/javascript" src="js/saiku/views/FilterModal.js"></script>
+<script type="text/javascript" src="js/saiku/views/CustomFilterModal.js"></script>
+<script type="text/javascript" src="js/saiku/views/CalculatedMemberModal.js"></script>
+<script type="text/javascript" src="js/saiku/views/ParentMemberSelectorModal.js"></script>
+<script type="text/javascript" src="js/saiku/views/DataSourcesModal.js"></script>
+<script type="text/javascript" src="js/saiku/views/QueryToolbar.js"></script>
+<script type="text/javascript" src="js/saiku/views/WorkspaceToolbar.js"></script>
+<script type="text/javascript" src="js/saiku/views/WorkspaceDropZone.js"></script>
+<script type="text/javascript" src="js/saiku/views/Table.js"></script>
+<script type="text/javascript" src="js/saiku/views/Workspace.js"></script>
+<script type="text/javascript" src="js/saiku/views/SchemaConfig.js"></script>
+<script type="text/javascript" src="js/saiku/views/DeleteRepositoryObject.js"></script>
+<script type="text/javascript" src="js/saiku/views/MoveRepositoryObject.js"></script>
+<script type="text/javascript" src="js/saiku/views/OpenQuery.js"></script>
+<script type="text/javascript" src="js/saiku/views/SaveQuery.js"></script>
+<script type="text/javascript" src="js/saiku/views/OpenDialog.js"></script>
+<script type="text/javascript" src="js/saiku/views/TabSet.js"></script>
+<script type="text/javascript" src="js/saiku/views/Tab.js"></script>
+<script type="text/javascript" src="js/saiku/models/Repository.js"></script>
+<script type="text/javascript" src="js/saiku/models/Result.js"></script>
+<script type="text/javascript" src="js/saiku/models/QueryAction.js"></script>
+<script type="text/javascript" src="js/saiku/models/QueryScenario.js"></script>
+<script type="text/javascript" src="js/saiku/models/Query.js"></script>
+<script type="text/javascript" src="js/saiku/views/SessionErrorModal.js"></script>
+<script type="text/javascript" src="js/saiku/views/WarningModal.js"></script>
+<script type="text/javascript" src="js/saiku/views/TitlesModal.js"></script>
+<script type="text/javascript" src="js/saiku/views/GrowthModal.js"></script>
+<script type="text/javascript" src="js/saiku/views/FormatAsPercentageModal.js"></script>
+<script type="text/javascript" src="js/saiku/models/Session.js"></script>
+<script type="text/javascript" src="js/saiku/views/SplashScreen.js"></script>
+<script type="text/javascript" src="js/saiku/models/SessionWorkspace.js"></script>
+<script type="text/javascript" src="js/saiku/models/Member.js"></script>
+<script type="text/javascript" src="js/saiku/models/Plugin.js"></script>
+<script type="text/javascript" src="js/saiku/models/Settings.js"></script>
+<script type="text/javascript" src="js/saiku/models/License.js"></script>
+<script type="text/javascript" src="js/saiku/models/DataSources.js"></script>
+<script type="text/javascript" src="js/saiku/Saiku.js"></script>
+<script type="text/javascript" src="js/saiku/views/DateFilterModal.js"></script>
+<script type="text/javascript" src="js/saiku/adapters/SaikuServer.js"></script>
+<script type="text/javascript" src="js/saiku/routers/QueryRouter.js"></script>
+<script type="text/javascript" src="js/saiku/views/Tour.js"></script>
+<script type="text/javascript" src="js/saiku/intros/workspaceintro.js"></script>
+
+<!-- END CUT HERE -->
+
+<!-- Saiku Minified - remove all of the above and uncomment the following -->
+<!--
+<script type="text/javascript" src="saiku.min.js"></script>
+-->
+
+<!--
+<script src="js/leaflet/leaflet-heat.js"></script>
+-->
+
+<script type="text/javascript" src="js/saiku/plugins/I18n/plugin.js"></script>
+<!-- Saiku plugins -->
+
+
+<!-- FILTER PLUGIN disabled by default
+<script type="text/javascript" src="js/saiku/plugins/filters/filterconfig.js" defer></script>
+<script type="text/javascript" src="js/saiku/plugins/filters/plugin_disabled.js" defer></script>
+-->
+
+<script type="text/javascript" src="js/intro/intro.min.js"></script>
+
+
+<!-- CCC dependencies -->
+<script type="text/javascript" src="js/saiku/plugins/CCC_Chart/def.js"></script>
+<script type="text/javascript" src="js/saiku/plugins/CCC_Chart/protovis.js"></script>
+<script type="text/javascript" src="js/saiku/plugins/CCC_Chart/protovis-msie.js"></script>
+<!--<script type="text/javascript" src="js/saiku/plugins/CCC_Chart/cdo.js"></script>-->
+<script type="text/javascript" src="js/saiku/plugins/CCC_Chart/pvc.js"></script>
+
+<script type="text/javascript" src="js/saiku/plugins/CCC_Chart/jquery.tipsy.js"></script>
+<script type="text/javascript" src="js/saiku/plugins/CCC_Chart/tipsy.js"></script>
+<link type="text/css" href="js/saiku/plugins/CCC_Chart/tipsy.css" rel="stylesheet"/>
+
+<!--<script type="text/javascript" src="../js/saiku/render/SaikuRenderer.js"></script>
+<script type="text/javascript" src="../js/saiku/render/SaikuTableRenderer.js"></script>
+<script type="text/javascript" src="../js/saiku/render/SaikuChartRenderer.js"></script>
+<script type="text/javascript" src="../js/saiku/embed/SaikuEmbed.js"></script>-->
+
+<script type="text/javascript" src="js/saiku/embed/SaikuEmbed.js"></script>
+<!-- ACE Editor for MDX -->
+<script type="text/javascript" src="js/ace/ace.js" charset="utf-8"></script>
+
+
+<!-- Templates -->
+<script type="text/x-jquery-tmpl" id="template-toolbar">
+            <ul>
+                    <li><a id='new_query' href='#new_query' title='New query' class='new_tab i18n sprite'></a></li>
+                    <li class='separator'>&nbsp;</li>
+                    <li><a id='open_query' href='#open_query' title='Open query' class='open_query i18n sprite'></a></li>
+                    <% if (!data.buttons) { %>
+                    <li class='separator'>&nbsp;</li>
+                    <li><a id='logout' href='#logout' title='Logout' class='logout i18n sprite'></a></li>
+
+                    <li class='separator'>&nbsp;</li>
+                    <li><a id='about' href='#about' title='About' class='about i18n sprite'></a></li>
+                    <li class='separator'>&nbsp;</li>
+                    <li><a id='help_icon' href='#help' target='_blank' title='Help' class='help i18n sprite'></a></li>
+
+                    <li class='separator'>&nbsp;</li>
+                    <% } %>
+<!--                    <li><a id='issue_tracker' href='#issue_tracker' title='Issue Tracker' class='bug i18n sprite'></a></li>-->
+            </ul>
+
+            <%= data.logo %>
+
+
+</script>
+
+<script type="text/x-jquery-tmpl" id="template-upgrade">
+            <div class="upgradeheader">
+                <!--You are using Saiku Community Edition, please consider <a target="_blank" href="http://saiku.meteorite.bi/support">purchasing support, or entering a sponsorship agreement with us</a> to support development. <a href="mailto:info@meteorite.bi?subject=Supporting Saiku">info@meteorite.bi</a><span class="close_tab sprite"></span>-->
+            </div>
+
+
+</script>
+<script type="text/x-jquery-tmpl" id="template-logincount">
+            <div class="upgradeheader">
+
+            </div>
+
+
+</script>
+<script type="text/x-jquery-tmpl" id="template-cubes">
+            <div >
+            <select  id="cubesselect" class="form-control cubes ui-widget">
+                <option value="" class="i18n">Select a cube</option>
+                <% _.each(connections, function(connection) { %>
+                    <% _.each(connection.catalogs, function(catalog) { %>
+                        <% _.each(catalog.schemas, function(schema) {
+                            if (schema.cubes.length > 0) { %>
+                                <optgroup label="<%= ( schema.name != "" ? schema.name : catalog.name) +'  (' + connection.name + ')' %>">
+                                <% _.each(schema.cubes, function(cube) { %>
+                                    <% if (typeof cube["visible"] == "undefined" || cube["visible"]) { %>
+                                        <option value="<%= connection.name %>/<%= catalog.name %>/<%=  ((schema.name == '' || schema.name == null) ? 'null' : schema.name)  %>/<%= encodeURIComponent(cube.name) %>"><%= ((cube.caption == '' || cube.caption == null) ? cube.name : cube.caption) %></option>
+                                    <% } %>
+                                <% }); %>
+                                </optgroup>
+                            <% } %>
+                        <% }); %>
+                    <% }); %>
+                <% }); %>
+            </select>
+            </div>
+
+
+</script>
+
+<script type="text/x-jquery-tmpl" id="template-dimensions">
+        <ul>
+        <% _.each(dimensions, function(dimension) { %>
+<% if (dimension.name != 'Measures' && (typeof dimension["visible"] == "undefined" || dimension["visible"])) { %>
+<li class='parent_dimension'>
+
+<a class="folder_collapsed sprite" href="#" title="<%= dimension.description ? dimension.description : dimension.caption %>"><%= dimension.caption %></a>
+	<span class="root collapsed sprite"></span>
+	<ul>
+		<% _.each(dimension.hierarchies, function(hierarchy) { %>
+		<% if (typeof hierarchy["visible"] == "undefined" || hierarchy["visible"]) { %>
+		<% if ((Settings.DIMENSION_HIDE_HIERARCHY === 'NONE' && dimension.hierarchies.length > 1)
+		|| (Settings.DIMENSION_HIDE_HIERARCHY === 'SINGLE_LEVEL' && ((Settings.DIMENSION_SHOW_ALL && hierarchy["levels"].length > 2) || (!Settings.DIMENSION_SHOW_ALL && hierarchy["levels"].length > 2)))) { %>
+		<li class="hierarchy hide">
+			<a class="dimension" title="<%= hierarchy.description ? hierarchy.description : hierarchy.caption %>" href="#"  hierarchy="<%= hierarchy.name %>"><%= hierarchy.caption %></a>
+		</li>
+		<% } %>
+		<ul class="d_hierarchy" hierarchy="<%= hierarchy.uniqueName %>" hierarchycaption="<%= hierarchy.caption %>">
+			<!--<div class="hgroup treehidden"><%= hierarchy.caption %></div>-->
+			<% _.each(hierarchy.levels, function(level,index) { %>
+			<% if ((Settings.DIMENSION_SHOW_ALL && level.name != "(All)") && (typeof level["visible"] == "undefined" || level["visible"])) { %>
+			<li class="hide d_level">
+				<a title="<%= (Settings.DIMENSION_HIDE_HIERARCHY === 'SINGLE_LEVEL' || Settings.DIMENSION_HIDE_HIERARCHY === 'ALL') && dimension.hierarchies.length > 1? hierarchy.caption + ' - ' : '' %><%= level.description ? level.description : level.caption %>" level="<%= level.name %>" hierarchy="<%= hierarchy.uniqueName %>"
+				   class="level" href="#<%= encodeURIComponent(hierarchy.uniqueName) %>/<%= encodeURIComponent(level.name) %>"><%= (hierarchy["levels"].length < 3)?dimension.caption:level.caption %></a>
+				<span class="clear_dimension i18n_translated" title="Очистить"></span>
+			</li>
+			<% } %>
+			<% }); %>
+		</ul>
+		<% } %>
+		<% }); %>
+	</ul>
+	<% } %>
+	<% }); %>
+
+        </ul>
+
+
+</script>
+
+<script type="text/x-jquery-tmpl" id="template-measures">
+                <ul>
+                <% var g = _.groupBy(measures, 'measureGroup'); %>
+                <% _.each(g, function(group, key) { %>
+                    <% if(key != "null") { %>
+                    <li class='parent_dimension'>
+                    <!--<span class="root <%= Settings.MEASURE_GROUPS_COLLAPSED ? 'collapsed' : 'expand' %> sprite"></span>-->
+                      <!--<a class="folder_expand sprite" href="#" title="<%= key %>"><%= key %></a>-->
+                        <ul>
+                        <% _.each(group, function(measure) { %>
+                        <% if (typeof measure["visible"] == "undefined" || measure["visible"]) { %>
+                        <li class="d_measure <%= Settings.MEASURE_GROUPS_COLLAPSED ? 'hide' : '' %>"><a
+                                measure="<%= measure.name %>" type="EXACT"
+                            class="measure" href="#Measures/member/<%= encodeURIComponent(measure.uniqueName) %>"><%= measure.caption %></a>
+                            <div class="clear_measure" title="Очистить"></div>
+                        </li>
+
+                        <% } %>
+                        <% }); %>
+                        </ul>
+                        </li>
+                    <% } else {%>
+                    <li class='parent_dimension'>
+                    <!--<span class="root <%= Settings.MEASURE_GROUPS_COLLAPSED ? 'collapsed' : 'expand' %> sprite"></span>-->
+                      <!--<a class="folder_expand sprite" href="#" title=" "> </a>-->
+                        <ul>
+                    <% _.each(group, function(measure) { %>
+
+                        <li class="d_measure <%= Settings.MEASURE_GROUPS_COLLAPSED ? 'hide' : '' %>"><a title="<%= measure.description ? measure.description : measure.uniqueName %>"
+                                measure="<%= measure.name %>" type="EXACT"
+                            class="measure" href="#Measures/member/<%= encodeURIComponent(measure.uniqueName) %>"><%= measure.caption %></a>
+                        </li>
+
+                        <% }); %>
+                      </ul>
+                      </li>
+                    <% } %>
+                <% }); %>
+                </ul>
+
+
+</script>
+<script type="text/x-jquery-tmpl" id="template-calculated-measures">
+        <ul>
+            <li>
+                <span class="root expand sprite"></span>
+                   <a href="#" title="Calculated Measures" class="folder_expand sprite i18n">Calculated Measures</a>
+                <% if (measures) { %>
+                <ul>
+                <% _.each(measures, function(measure) { %>
+
+                        <li class="d_measure"><a title="<%= measure.name %>"
+                                measure="<%= measure.name %>" type="CALCULATED"
+                            class="measure" href="#Measures/member/<%= encodeURIComponent(measure.uniqueName) %>"><%= measure.name %></a>
+                        </li>
+
+                <% }); %>
+                <% } %>
+                </ul>
+            </li>
+        </ul>
+
+
+</script>
+<script type="text/x-jquery-tmpl" id="template-calculated-member">
+    <% if (member) { %>
+        <li class="hide d_level dimension-level-calcmember">
+            <a title="<%= member.name %>" level="<%= member.name %>" hierarchy="<%= member.hierarchyName %>" uniquename="<%= member.uniqueName %>" class="level level-calcmember" href="#<%= encodeURIComponent(member.hierarchyName) %>/<%= encodeURIComponent(member.name) %>" style="color: #1e7145;"><%= member.name %></a>
+        </li>
+    <% } %>
+
+
+</script>
+<script type="text/x-jquery-tmpl" id="template-workspace">
+        <div class="workspace">
+            <div class="workspace_inner">
+                <div class="query_toolbar"></div>
+                <div class="workspace_toolbar"></div>
+                <div class="upgrade"></div>
+                <div class="parameter_input" />
+                <div class="workspace_editor hide">
+                    <div id='mdx_editor' class='mdx_input hide'>
+                    </div>
+                    <span class="editor_info hide"></span>
+
+                </div>
+                <div id="query_processing" class="query_processing" style="display:none;"><span class="processing_image">&nbsp;&nbsp;</span> <span class="i18n">Running query...</span>  [&nbsp;<a class="cancel i18n" href="#cancel">Cancel</a>&nbsp;]</div>
+
+                <div class="workspace_results_info" align="right" />
+                <div class="workspace_results_titles" align="center"/>
+                <div class="workspace_results">
+
+                </div>
+            </div>
+        </div>
+        <div class="sidebar">
+            <div>
+                <h3 class="top i18n">Cubes</h3>
+                <div class="refresh_cubes_nav">
+                    <a id="refresh_icon" href="#refresh_cubes"
+                        class="i18n button refresh_cubes"
+                        title="Refresh Cubes (Clear Cache)"></a>
+                </div>
+                <div class="admin_console_nav"></div>
+            </div>
+            <div class="sidebar_inner">
+                <%= cube_navigation %>
+            </div>
+            <div class="metadata_attribute_wrapper">
+                <%=  _.template($("#template-attributes").html())() %>
+            </div>
+
+        </div>
+
+        <div class="sidebar_separator"></div>
+        <div class="clear"></div>
+
+        </div>
+        <div class="add_measure_modal_dialog hide">
+
+
+</script>
+
+<script type="text/x-jquery-tmpl" id="template-attributes">
+
+        <div class="metadata_attribute_container">
+            <h3 class="measure_caption"><span class="i18n">Показатели<div title="Добавить показатель" class="addMeasure"></div></span></h3>
+            <div class="sidebar_inner measure_tree">
+                <% if (typeof cube != "undefined" && cube && cube.dimensions) { %>
+                    <%= _.template($("#template-measures").html(), { measures: cube.measures }) %>
+                <% } else { %>
+                    <span class="i18n loading hide">Loading...</span>
+                <% } %>
+                <div class="calculated_measures" style="display:none;"></div>
+                <div class="calculated_members" style="display:none;"></div>
+            </div>
+            <!--<h3 class="i18n dimension_header">Измерения<a title="Добавить показатель" class="button addMeasure i18n"><div></div>Добавить показатель</a></h3>-->
+            <div class="sidebar_inner dimension_tree">
+                <% if (typeof cube != "undefined" && cube && cube.dimensions) { %>
+                    <%=  _.template($("#template-dimensions").html(), { dimensions: cube.dimensions }) %>
+                <% } else { %>
+                    <span class="i18n loading hide">Loading...</span>
+                <% } %>
+
+            </div>
+        </div>
+
+
+
+
+</script>
+
+
+<script type="text/x-jquery-tmpl" id="template-workspace-dropzones">
+        <div class="workspace_fields disabled">
+            <div class="fields_list details_fields" title="Настройка отображения показателей">
+                <div class="fields_list_header measure_fields disabled_toolbar"><span class="i18n"><div class="indicators_img"></div>Показатели в отчете</span><span class="dropdown"></span></div>
+                <div class="fields_list_body details">
+                    <ul class="connectable"></ul>
+                </div>
+                <span class="clear_axis i18n hide" title="Clear Axis"></span>
+                <div class="clear"></div>
+            </div>
+            <div class="fields_list columns_fields" title="COLUMNS">
+                <div class="fields_list_header axis_fields_header disabled_toolbar"><span class="i18n"><div class="measures_img"></div>Колонки</span><span class="dropdown"></span></div>
+                <div class="fields_list_body columns axis_fields">
+                    <ul class="connectable"></ul>
+                </div>
+                <span class="clear_axis i18n hide" title="Clear Axis"></span>
+                <div class="clear"></div>
+            </div>
+            <div class="fields_list rows_fields" title="ROWS">
+                <div class="fields_list_header axis_fields_header disabled_toolbar"><span class="i18n"><div class="rows_img"></div>Строки</span><span class="dropdown"></span></div>
+                <div class="fields_list_body rows axis_fields">
+                    <ul class="connectable"></ul>
+                </div>
+                <span class="clear_axis i18n hide" title="Clear Axis"></span>
+                <div class="clear"></div>
+            </div>
+            <div class="fields_list filter_fields" title="FILTER">
+                <div class="fields_list_header axis_fields_header disabled_toolbar"><span class="i18n"><div class="filter_img"></div>Фильтр</span><span class="dropdown"></span></div>
+                <div class="fields_list_body filter axis_fields">
+                    <ul class="connectable"></ul>
+                </div>
+                <span class="clear_axis i18n hide" title="Clear Axis"></span>
+                <div class="clear"></div>
+            </div>
+        </div>
+
+
+</script>
+
+<script type="text/x-jquery-tmpl" id="template-workspace-toolbar">
+       <ul>
+
+       <li><div class="clear_analyze_settings">
+       <a href="#clear_filter'" id="clear_filter" class="swap_axis button sprite i18n_translated" original-title="Очистить настройки"></a>
+       </div></li>
+
+<li><div style="    background: linear-gradient(to top, #eaeaea, #ffffff);    border: 1px solid #dfdfdf;    border-radius: 3px;    height: 26px;    width: 26px;
+    "><a href="#swap_axis" id="swap_axis_icon" class="swap_axis button sprite i18n_translated" original-title="Поменять местами оси"></a></div></li>
+
+<li><div style="    background: linear-gradient(to top, #eaeaea, #ffffff);    border: 1px solid #dfdfdf;    border-radius: 3px;    height: 26px;
+    "><a href="#non_empty" id="non_empty_icon" class="non_empty button sprite i18n_translated on" original-title="Скрыть пустые измерения"></a></div></li>
+
+
+
+
+<li style="display:block;"><a href="#automatic_execution" id="automatic_icon" class="auto button sprite i18n_translated on"
+		   original-title="Автоматическое выполнение">
+		<input class="checkbox" type="checkbox"><label hash="#automatic_execution">Автообновление</label><label hash="#automatic_execution" class="auto_exe"></label>
+	</a></li>
+
+
+	<li style="display:block;">
+	<a href="#run_query" id="run_query" class="save button sprite i18n_translated disabled_toolbar" original-title="Обновить таблицу">
+			<div class="refresh_button"></div>
+			</a></li>
+
+
+
+<!--<li class="seperator"><a href="#drillacross" id="drillacross_icon"-->
+<!--class="i18n table_mode drillacross button disabled_toolbar sprite"-->
+<!--title="Drill across on cell"></a></li>-->
+
+<!--<li class="seperator"><a href="#drillthrough" id="drillthrough_icon"-->
+                <!--class="i18n table_mode drillthrough button disabled_toolbar sprite"-->
+                <!--title="Drill through on cell"></a></li>-->
+
+
+                <!--<li class="seperator"><a href="#zoom_mode" id="zoom_mode_icon"-->
+                <!--class="i18n table_mode zoom_mode button disabled_toolbar"-->
+                <!--title="Zoom into table"></a></li>-->
+
+
+                <li class="seperator"><a href="#group_parents" id="group_icon"
+                class="i18n group_parents button disabled_toolbar sprite"
+                title="Hide Parents"></a></li>
+
+
+
+
+
+
+
+
+
+
+<!--<li style="float:right;position: absolute;right: 249px;width: 178px;" class="export_scrollbox">-->
+		<!--&lt;!&ndash;<div></div>&ndash;&gt;-->
+		<!--&lt;!&ndash;<span>Выгрузить отчет</span><div class="export_arrow"></div>&ndash;&gt;-->
+		<!--&lt;!&ndash;<div style="margin-top: 7px;">&ndash;&gt;-->
+			<!--&lt;!&ndash;<a href="#export_xls" id="export_xls_icon" class="export_xls button sprite i18n_translated" original-title="Выгрузить в XLS"></a><span>.xls</span></div>&ndash;&gt;-->
+		<!--&lt;!&ndash;<div><a href="#export_xlsx" id="export_ooxml_icon" class="export_xls button sprite i18n_translated" original-title="Выгрузить в XLSX"></a><span>.xlsx</span></div>&ndash;&gt;-->
+		<!--&lt;!&ndash;<div><a href="#export_ods" id="export_ods_icon" class="i18n export_csv button sprite i18n_failed i18n_translated" original-title="Выгрузить в ODS"></a><span>.ods</span></div>&ndash;&gt;-->
+		<!--&lt;!&ndash;<div><a href="#export_ots" id="export_ots_icon" class="i18n export_csv button sprite i18n_failed i18n_translated" original-title="Выгрузить в OTS"></a><span>.ots</span></div>&ndash;&gt;-->
+		<!--<a href="#export_xlsx" id="export_ooxml_icon" class="export_xls button sprite i18n_translated" original-title="Выгрузить в XLSX"></a>-->
+	<!--</li>-->
+
+
+	<li style="float:right" ><a href="#save_query" id="save_icon" class="save sprite i18n_translated" original-title="Сохранить в отчеты">
+			<div class="save_button"></div></a></li>
+
+			<li style="float:  right;">
+		<a href="#export_xlsx" id="export_ooxml_icon" class="export_xls button sprite i18n_translated disabled_toolbar" original-title="Выгрузить в XLSX"></a>
+	</li>
+	<li style="float:  right;">
+		<a href="#export_button" class="export_button i18n_translated menu button hidden" original-title="Export"></span></a>
+	</li>
+
+
+
+
+
+
+	<% if (Settings.USER_TITLES == true) { %>
+	<li><a href="#workspace_titles"
+							 class="i18n workspace_titles button disabled_toolbar sprite"
+							 title="Titles"></a></li>
+	<% } %>
+
+
+
+
+	<li><a style="display:none" href="#export_pdf" id="export_pdf_icon"
+		   class="i18n export_pdf button disabled_toolbar sprite"
+		   title="EXPERIMENTAL: Export PDF"></a></li>
+
+
+	<% if (Settings.BIPLUGIN5 == true) { %>
+	<li style="padding-left: 170px;">
+		<a href="#about" class="i18n about button sprite" title="About"></a></li>
+	<% } %>
+
+</ul>
+
+        <div class="modal_overlay hide">
+
+<div class="save_report_modal save_new_report hide">
+	<span>Сохранение отчета</span>
+	<span>Укажите название нового отчета</span>
+	<span>Название нового отчета</span>
+	<input class="report_name_input" value="Анализ данных">
+	<div class="modal_bottom_line"></div>
+	<div class="modal_bottom_buttons">
+		<button class="modalCancelQuery">Отмена</button>
+		<button class="modalSaveQuery">Сохранить</button>
+	</div>
+</div>
+
+
+<div class="save_report_modal save_opened_owned_report hide">
+	<span>Обновление отчета</span>
+	<div class="middle_area">
+    <span>Название отчета</span><span id="update_report_name_span"></span>
+    <span>Изменен</span><span id="update_report_update_date_span"></span>
+
+</div>
+<span class="update_confirm_span">Вы уверены что хотите обновить выбранный отчет?</span><div class="modal_bottom_line"></div>
+	<div class="modal_bottom_buttons">
+		<button class="modalCancelQuery">Отмена</button>
+		<button class="modalSaveQuery">Сохранить</button>
+	</div>
+</div>
+
+
+<div class="save_report_modal delete_report hide">
+	<span>Удаление отчета</span>
+	<div class="middle_area">
+    <span>Название отчета</span><span id="update_report_name_span"></span>
+    <span>Изменен</span><span id="update_report_update_date_span"></span>
+
+</div>
+<span class="update_confirm_span">Вы уверены что хотите удалить выбранный отчет?</span><div class="modal_bottom_line"></div>
+	<div class="modal_bottom_buttons">
+		<button class="modalCancelDelete">Отмена</button>
+		<button class="modalDeleteQuery">Удалить</button>
+	</div>
+</div>
+
+
+<div class="save_report_modal save_opened_alien_report hide">
+	<span>Сохранение отчета</span>
+	<span>Вы пытаетесь сохранить отчет, который был создан другим пользователем. <br> Для сохранения нового отчета укажите другое название.</span>
+	<span>Название нового отчета</span>
+	<input class="report_name_input">
+	<div class="modal_bottom_line"></div>
+	<div class="modal_bottom_buttons">
+		<button class="modalCancelQuery">Отмена</button>
+		<button class="modalSaveQuery">Сохранить</button>
+	</div>
+</div>
+
+
+
+<div class="save_report_modal save_report_success hide">
+	<span>Отчет успешно сохранен</span>
+	<div class="modal_bottom_line"></div>
+	<div class="modal_bottom_buttons">
+		<button class="close_save_report_modal">Ок</button>
+	</div>
+</div>
+        </div>
+
+
+</script>
+<script type="text/x-jquery-tmpl" id="add-measure">
+
+        <div class='add_indicator_form indicators_form'>
+	<div class='indicators_header'>
+		<input place-holder='Поиск' class='indicators_header__search_box'>
+		<div id='addMeasuresearchByName' class='indicators_header__search_button' ></div>
+		<div id='addMeasureclearSearch'class='indicators_header__clear_search_button hide' ></div>
+		<div class='indicators_header__buttons_box'><label>Показывать</label>
+			<button id='addMeasurefilterShowAll' class='indicators_header__buttons_box__button left_button active'>Все</button>
+			<button id='addMeasurefilterShowSelected' class='indicators_header__buttons_box__button'>Отмеченные</button>
+			<button id='addMeasurefilterShowUnselected' class='indicators_header__buttons_box__button right_button'>Неотмеченные</button>
+			<button disabled='disabled' id='addMeasureclearAll' class='indicators_header__buttons_box__button img_into_button clear_button'><div></div>Очистить выборку</button>
+			<button class='indicators_header__buttons_box__button img_into_button change_group_button' id='addMeasurechangeGroup'><div></div>Сменить группировку</button>
+			<button disabled='disabled' class='indicators_header__buttons_box__button img_into_button analysis_button'  id='addMeasureanalysIndicators'><div></div>Анализировать выбранные</button>
+			</div>
+		</div>
+	<div class='indicators_table'>
+		<div class='indicators_table__header'>
+			<div>Группа</div><div>Показатель</div><div>Значение</div><div>Единицы измерения</div><div>Обновлено</div>
+			</div>
+		<div class='table_content_block'>
+			<% _.each(measureGroups, function(mg,index) { %>
+			<div index='<%= index %>' class='indicators_group_row <%= mg.isSelected? \"active\":\"\" %>'>
+				<div class='title-item'>
+					<input class='select_all_indicator_row' type='checkbox' index='<%= index %>'>
+					<div class='expanded indicators_group_row__arrow'></div><%= mg.name %></div>
+				<% _.each(mg.facts, function(fact,factIndex) { %>
+				<div class='indicator_row indicator_check_box not_expand'>
+					<input index='<%= index %>' fact-index='<%= factIndex %>'class=' not_expand' type='checkbox' >
+					<div index='<%= index %>' fact-index='<%= factIndex %>' class=' not_expand' ><%= fact.name %></div>
+					<div class='not_expand'><%= fact.updateDate %></div>
+					<div class='not_expand'><%= fact.value %></div>
+					<div class='not_expand'><%= fact.unitName %></div>
+					</div>
+				<% }) %>
+				</div>
+			<% }) %>
+			</div>
+		<div class='bottom_panel'>
+			<div id='addMeasureindicators_shown_count'>Показано </span></div>
+			<div id='addMeasureindicators_selected_count'><span>Выбрано </span> 0</div>
+			</div></div></div>
+
+
+
+</script>
+
+<script type="text/x-jquery-tmpl" id="template-query-toolbar">
+        <div class="query_toolbar_vertical">
+        <ul class="renderer">
+            <li><a href="#switch_render_button" id="table_icon"
+                class="i18n render_table button disabled_toolbar on"
+                title="Table Mode"></a></li>
+            <li><a href="#switch_render_button" id="chart_icon"
+                class="i18n render_chart button disabled_toolbar"
+                title="Chart Mode"></a></li>
+        </ul>
+        <ul class='options table hide'>
+                        <!--<li class="seperator_vertical label"><a class="i18n label disabled_toolbar">Options:</a></li> -->
+
+            <li class="seperator_vertical"><a href="#spark_bar" id="spark_bar_icon"
+                class="i18n spark_bar tablebutton button disabled_toolbar"
+                title="Spark Bar"></a></li>
+            <li><a href="#spark_line" id="spark_line_icon"
+                class="i18n spark_line button disabled_toolbar"
+                title="Spark Line"></a></li>
+           <!-- <li><a href="#asdf"
+                class="i18n button disabled_toolbar"
+                title="Spark Lines">Show Totals</a></li> -->
+
+        </ul>
+        <ul class='options chart hide'>
+            <li class="seperator_vertical"></li>
+
+            <li><a href="#bar"
+                class="i18n bar chartoption button disabled_toolbar"
+                title="Bar"></a></li>
+            <li><a href="#stackedBar"
+                class="i18n stackedBar chartoption on button disabled_toolbar"
+                title="Stacked Bar"></a></li>
+            <li><a href="#stackedBar100"
+                class="i18n stackedBar100 chartoption button disabled_toolbar"
+                title="Bar 100%"></a></li>
+            <li><a href="#multiplebar"
+                class="i18n multiple chartoption button disabled_toolbar"
+                title="Multiple Bar Chart"></a></li>
+            <li><a href="#line"
+                class="i18n line chartoption button disabled_toolbar"
+                title="Line"></a></li>
+            <li><a href="#area"
+                class="i18n area chartoption button disabled_toolbar"
+                title="Area"></a></li>
+            <li><a href="#heatgrid"
+                class="i18n heatgrid chartoption button disabled_toolbar"
+                title="Heat Grid"></a></li>
+            <li><a href="#treemap"
+                class="i18n treemap chartoption button disabled_toolbar"
+                title="Tree Map"></a></li>
+            <li><a href="#sunburst"
+                class="i18n sunburst chartoption button disabled_toolbar"
+                title="Sunburst"></a></li>
+            <li><a href="#multiplesunburst"
+                class="i18n multiplesunburst chartoption button disabled_toolbar"
+                title="Multi Sunburst"></a></li>
+            <li><a href="#dot"
+                class="i18n dot chartoption button disabled_toolbar"
+                title="Dot"></a></li>
+            <li><a href="#waterfall"
+                class="i18n waterfall chartoption button disabled_toolbar"
+                title="Waterfall"></a></li>
+            <li><a href="#pie"
+                class="i18n pie chartoption button disabled_toolbar"
+                title="Pie"></a></li>
+            <li><a href="#radar"
+                class="i18n radar chartoption button disabled_toolbar"
+                title="Radar"></a></li>
+           <!-- <li><a href="#chart_editor"
+                class="i18n custom_chart button disabled_toolbar"
+                title="Custom">Custom</a></li> -->
+        </ul>
+        </div>
+
+
+</script>
+
+<script type="text/x-jquery-tmpl" id="template-open-dialog">
+            <div class="workspace" style="margin-left: -305px">
+                <div class="workspace_inner" style="margin-left: 305px">
+                    <div class="workspace_toolbar hide">
+                    <ul>
+                        <li class='for_queries hide'><a href="#open_query" class="run button sprite"></a></li>
+                        <li class='for_queries hide'><a href="#edit_query" class="edit button sprite"></a></li>
+                        <li class='for_queries hide'><a href="#delete_query" class="delete button sprite"></a></li>
+                        <li class='for_queries hide'><a href="#edit_permissions" class="edit_permissions button sprite"></a></li>
+                        <!--
+                        <li class='for_folder hide'><a href="#edit_folder" class="edit_folder button"></a></li>
+                        -->
+                        <li class='for_folder hide'><a href="#delete_folder" class="delete button sprite"></a></li>
+                        <li class='for_folder hide'><a href="#edit_permissions" class="edit_permissions button sprite"></a></li>
+                    </ul>
+                    </div>
+                    <div class="workspace_results">
+                    </div>
+                </div>
+            </div>
+
+            <div class="sidebar queries" style="width: 300px">
+                <h3 class="top" style="padding-top:3px;padding-bottom:2px;">
+                <div class="form-inline">
+                    <label class="i18n">Search:</label> &nbsp;
+                        <input type="text" class="search_file2 form-control" style="padding-right:0px"></input>
+                        <span class="cancel_search"></span>
+                    <span class="add_folder_button"><a href='#' class='add_folder'></a></span>
+                    </div>
+                </h3>
+                <div class="sidebar_inner">
+                    <ul id="queries" class='RepositoryObjects'>
+                        <li class="i18n">Loading...</li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="sidebar_separator"></div>
+            <div class="clear"></div>
+
+
+</script>
+
+<script type="text/x-jquery-tmpl" id="template-repository-objects">
+            <% _.each( repoObjects, function( entry ) { %>
+                <% if( entry.type === 'FOLDER' ) { %>
+                   <%= _.template($("#template-repository-folder").html())({ entry: entry }) %>
+                <% } else { %>
+                    <%= _.template($("#template-repository-file").html())({ entry: entry }) %>
+                <% } %>
+            <% } ); %>
+
+
+</script>
+<script type="text/x-jquery-tmpl" id="template-repository-folder">
+            <% if(!Settings.REPOSITORY_LAZY) { %>
+                <li class='folder'>
+                    <div class='folder_row'>
+                        <span class='sprite folder collapsed'></span>
+                        <a href="#<%= entry.path %>"><%= entry.name %></a>
+                    </div>
+
+                    <ul class='hide folder_content'>
+
+                        <%= _.template($("#template-repository-objects").html())( { repoObjects: entry.repoObjects }) %>
+                    </ul>
+                </li>
+            <% } else { %>
+                <li class='folder'>
+                    <div class='folder_row'>
+                        <span class='sprite folder collapsed'></span>
+                        <a href="#<%= entry.path %>"><%= entry.name %></a>
+                    </div>
+                </li>
+            <% } %>
+
+
+</script>
+
+<script type="text/x-jquery-tmpl" id="template-repository-folder-lazyload">
+                <ul class='folder_content'>
+                    <%= _.template($("#template-repository-objects").html())( { repoObjects: repoObjects }) %>
+                </ul>
+
+
+</script>
+
+<script type="text/x-jquery-tmpl" id="template-repository-file">
+            <li class='query'>
+            <% if (Settings.ICON_16) { %>
+                <span class='icon_override' style='background-image: url(<%= Settings.ICON_16 %>);'></span>
+            <% } else { %>
+                <span class='icon'></span>
+            <% } %>
+                <a href="#<%= entry.path %>"><%= entry.name %></a>
+            </li>
+
+
+</script>
+
+<script type="text/x-jquery-tmpl" id="template-selections">
+            <div class="form-inline header_selections">
+                <label for="filter_selections" class="i18n">Search:</label> &nbsp;<div class="vm_input_icon vm_search_icon"></div><input placeholder="Найти" name="filter_selections"
+                id="filter_selections" disabled="true" type="text" class="form-control filterbox filter_search_input" /><input class="clear_filter_search i18n form-control clear_search form_button" type="submit" value="Очистить фильтр" /><br />
+            </div>
+            <div class="available_selections form-inline caption">
+                <div class="available_members_clean"></div>
+                <span class="i18n">Available members:</span><br/>
+                    <div class="selection_options" ><ul></ul></div>
+            </div>
+            <div class="selection_buttons">
+                <a class="form_button btn btn-default" href="#move_selection" id="add_members"><div class="parent_div_in_filter_button"><div></div>
+</div></a><br><br>
+                <a class="form_button btn btn-default" href="#move_selection" id="add_all_members"><div class="parent_div_in_filter_button"><div></div>
+</div></a><br><br>
+                <a class="form_button btn btn-default" href="#move_selection" id="remove_all_members"><div class="parent_div_in_filter_button"><div></div>
+</div></a><br><br>
+                <a class="form_button btn btn-default" href="#move_selection" id="remove_members"><div class="parent_div_in_filter_button"><div></div>
+</div></a>
+            </div>
+            <div class="used_selections form-inline caption">
+                <span class="i18n">Used members:</span>
+				<span>
+	 			<input class="selection_type selection_type_inclusion" type="radio" name="inclusion_type" value="INCLUSION" checked="true"><span class="i18n">Включить</span>
+	 			<input class="selection_type selection_type_exclusion" type="radio" name="inclusion_type"
+	 			 value="EXCLUSION"><span class="i18n">Исключить</span>
+	 			</span>
+	 			<br/>
+                    <div class="selection_options" ><ul></ul></div>
+            </div>
+            <div class="updown_buttons">
+                <a class="form_button" href="#up" id="up_members">&nbsp;&uarr;&nbsp;</a><br><br>
+                <a class="form_button" href="#down" id="down_members">&nbsp;&darr;&nbsp;</a><br><br>
+            </div>
+
+            <div class="options form-inline">
+	<input class="form-control" name="show_unique" id="show_unique" type="checkbox"/>&nbsp;<label
+	for="show_unique"
+	class="i18n">Show Unique Names</label><br/>
+
+
+	<!--<input name="use_result" class="form-control" id="use_result" type="checkbox"/>&nbsp;<label for="use_result"-->
+																								<!--class="i18n">Use-->
+	<!--Result</label><br/>-->
+	<div id="div-totals-container" style="width: 400px;">
+		<!--<div class="totals_container">-->
+			<!--<label class="i18n">Totals per metrics</label>-->
+			<!--<input type="checkbox" id="per_metrics_totals_checkbox"/>-->
+			<!--&nbsp;-->
+		<!--</div>-->
+		<div class="totals_container all_metrics_container">
+			<!--<strong>Показать результат</strong>-->
+			<!--<label for="show_totals" class="i18n"> по всем показателям </label>-->
+			<!--<select class="form-control" id="all_measures_select">-->
+				<!--<option class="i18n" value="nil" selected="selected">Нет</option>-->
+				<!--<option class="i18n" value="sum">Сумма</option>-->
+				<!--<option class="i18n" value="min">Минимум</option>-->
+				<!--<option class="i18n" value="max">Максимум</option>-->
+				<!--<option class="i18n" value="avg">Среднее</option>-->
+			<!--</select>-->
+		</div>
+	</div>
+	<!--<div class="form-inline">-->
+		<!--<label for="parameter" class="parameter hidden i18n">Parameter Name</label>&nbsp;<input-->
+		<!--name="parameter" id="parameter" class="form-control parameter hidden" type="text"/></div>-->
+
+
+</div>
+            <div class="info">
+                <div><label for="items_size" class="i18n">Всего</label>: <span class="items_size"></span></div>
+                <div><span class="warning i18n"></span></div>
+            </div>
+
+            <div class="hint">
+                <div><label for="search_limit" class="i18n">Возможно выбрать не более</label>: <span class="members_limit"></span></div>
+                <div><label for="search_limit" class="i18n">Возможно отметить не более</label>: <span class="search_limit"></span></div>
+            </div>
+
+            <div class="autocomplete"></div>
+
+
+</script>
+<script type="text/x-jquery-tmpl" id="template-selections-totals">
+    <div class="totals_container per_metrics_container">
+        <strong><%= measure.caption %> - </strong>
+        <label for="show_totals" class="i18n">Sub totals</label>
+        <select class="form-control show_totals_select">
+            <option class="i18n" value="nil" selected="selected">None</option>
+            <option class="i18n" value="sum">Sum</option>
+            <option class="i18n" value="min">Min</option>
+            <option class="i18n" value="max">Max</option>
+            <option class="i18n" value="avg">Avg</option>
+        </select>
+        &nbsp;
+    </div>
+
+
+</script>
+<script type="text/x-jquery-tmpl" id="template-selections-options">
+            <ul>
+            <li class="i18n all_options"><input type="checkbox" class="check_all_option"
+            id="check_all_option"><label for="check_all_option" class="i18n">Все значения</label></li>
+            <%  var counter = 0;
+                _.each(options, function(option) {
+                    counter++; %>
+                <% if (!option.calc) { %>
+                    <li class="option_value" title="<%=
+                            option.obj
+                            	? ((option.obj.uniqueName.includes("[dimension_2].[dimension_2]") && option.obj.uniqueName.length>34)
+                            		? (option.obj.uniqueName.length>47
+                            			? option.obj.uniqueName.replace("[dimension_2].[dimension_2].","").split("[").join("").split("]").join("").split(".")[0] + ", " + option.obj.uniqueName.replace("[dimension_2].[dimension_2].","").split("[").join("").split("]").join("").split(".")[3] + ", " + option.obj.caption
+										: option.obj.uniqueName.replace("[dimension_2].[dimension_2].","").split("[").join("").split("]").join("").split(".")[0] + ", " + option.obj.caption)
+                            		: option.obj.caption)
+								: ((option.uniqueName.includes("[dimension_2].[dimension_2]") && option.uniqueName.length>34)
+									? (option.uniqueName.length>47
+										? option.uniqueName.replace("[dimension_2].[dimension_2].","").split("[").join("").split("]").join("").split(".")[0] + ", " + option.uniqueName.replace("[dimension_2].[dimension_2].","").split("[").join("").split("]").join("").split(".")[3] + ", " + option.caption
+										: option.uniqueName.replace("[dimension_2].[dimension_2].","").split("[").join("").split("]").join("").split(".")[0] + ", " + option.caption)
+									: option.caption)
+                            %>">
+                        <input type="checkbox" class="check_option"
+                            value="<%= encodeURIComponent(option.obj ? option.obj.uniqueName : option.uniqueName) %>" name="selections_checker"
+                            id="selections_checker<%= counter %>"
+                            label="<%= encodeURIComponent(option.obj ? option.obj.caption : option.caption) %>" />
+                            <label for="selections_checker<%= counter %>" class="caption"><%=
+                            option.obj
+                            	? ((option.obj.uniqueName.includes("[dimension_2].[dimension_2]") && option.obj.uniqueName.length>34)
+                            		? (option.obj.uniqueName.length>47
+                            			? option.obj.uniqueName.replace("[dimension_2].[dimension_2].","").split("[").join("").split("]").join("").split(".")[0] + ", " + option.obj.uniqueName.replace("[dimension_2].[dimension_2].","").split("[").join("").split("]").join("").split(".")[3] + ", " + option.obj.caption
+										: option.obj.uniqueName.replace("[dimension_2].[dimension_2].","").split("[").join("").split("]").join("").split(".")[0] + ", " + option.obj.caption)
+                            		: option.obj.caption)
+								: ((option.uniqueName.includes("[dimension_2].[dimension_2]") && option.uniqueName.length>34)
+									? (option.uniqueName.length>47
+										? option.uniqueName.replace("[dimension_2].[dimension_2].","").split("[").join("").split("]").join("").split(".")[0] + ", " + option.uniqueName.replace("[dimension_2].[dimension_2].","").split("[").join("").split("]").join("").split(".")[3] + ", " + option.caption
+										: option.uniqueName.replace("[dimension_2].[dimension_2].","").split("[").join("").split("]").join("").split(".")[0] + ", " + option.caption)
+									: option.caption)
+                            %></label>
+                            <label for="selections_checker<%= counter %>" class="unique"><%= option.obj ? option.obj.uniqueName : option.uniqueName
+                            %></label>
+                    </li>
+                <% } else { %>
+                    <li class="option_value" title="222222">
+                        <input type="checkbox" class="check_option cmember"
+                            value="<%= encodeURIComponent(option.obj ? option.obj.uniqueName : option.uniqueName) %>" name="selections_checker"
+                            id="selections_checker<%= counter %>"
+                            label="<%= encodeURIComponent(option.obj ? option.obj.caption : option.caption) %>" />
+                            <label for="selections_checker<%= counter %>" class="caption" style="color: blue;"><%=
+							option.obj
+                            	? ((option.obj.uniqueName.includes("[dimension_2].[dimension_2]") && option.obj.uniqueName.length>34)
+                            		? (option.obj.uniqueName.length>47
+                            		 	? option.obj.uniqueName.replace("[dimension_2].[dimension_2].","").split("[").join("").split("]").join("").split(".")[0] + ", " + option.obj.uniqueName.replace("[dimension_2].[dimension_2].","").split("[").join("").split("]").join("").split(".")[3] + ", " + option.obj.caption
+										: option.obj.uniqueName.replace("[dimension_2].[dimension_2].","").split("[").join("").split("]").join("").split(".")[0] + ", " + option.obj.caption)
+                            		: option.obj.caption)
+								: ((option.uniqueName.includes("[dimension_2].[dimension_2]") && option.uniqueName.length>34)
+									? (option.uniqueName.length>47
+										? option.uniqueName.replace("[dimension_2].[dimension_2].","").split("[").join("").split("]").join("").split(".")[0] + ", " + option.uniqueName.replace("[dimension_2].[dimension_2].","").split("[").join("").split("]").join("").split(".")[3] + ", " + option.caption
+										: option.uniqueName.replace("[dimension_2].[dimension_2].","").split("[").join("").split("]").join("").split(".")[0] + ", " + option.caption)
+									: option.caption)
+                            %></label>
+                            <label for="selections_checker<%= counter %>" class="unique" style="color: blue;"><%=
+                            option.obj ? option.obj.uniqueName : option.uniqueName %></label>
+                    </li>
+                <% } %>
+            <% }); %>
+            </ul>
+
+
+</script>
+
+
+<script type="text/x-jquery-tmpl" id="template-permissions">
+            <div class="permissions">
+
+                        <label for="filter_roles" class="i18n">Add role permission:</label>
+                        <br />
+                        <form class="form-inline">
+                            <input name="filter_roles" id="filter_roles" type="text" class="filterbox form-control" />
+                            <input type="submit" value="Add" class="i18n add_role btn btn-primary" />
+                        </form>
+                        <input type="checkbox" class="acl" value="READ" /><span class="i18n">READ</span>
+                        <input type="checkbox" class="acl" value="WRITE" /><span class="i18n">WRITE</span>
+                        <input type="checkbox" class="acl" value="GRANT" /><span class="i18n">GRANT</span>
+                <br />
+                <br />
+                <span class="i18n">Roles:</span>
+                <div class="rolelist"></div>
+                <br />
+                <input type="submit" value="Remove permission" class="i18n btn btn-danger remove_acl" />
+            </div>
+            <br />
+            <div class="private">
+                <input type="checkbox" class="private" value="PRIVATE" /><span class="i18n">Keep this file private to me</span> (<b><%= Saiku.session.username %></b>)
+                <br /><br />
+                <span class="private_owner" style="display:none;"><span class="i18n">Currently private to:</span>&nbsp;<span class="owner"></span></span>
+            </div>
+            <br />
+
+
+</script>
+<script type="text/x-jquery-tmpl" id="template-permissions-rolelist">
+            <select class="select_roles" multiple size="4">
+                <% _.each(roles, function(grants, role) {
+                    var aclstring ="";
+                     _.each(grants, function(grant, index) {
+                        aclstring += (index > 0 ? (", " + grant) : grant);
+                    });
+                %>
+                    <option value="<%=role %>"><%= role + " [" + aclstring + "]" %></option>
+                <% }); %>
+            </select>
+
+
+</script>
+
+<script type="text/x-jquery-tmpl" id="template-drillthrough">
+            <div class="row_limit">
+                <br />
+                <span class="i18n">Row Limit: (0 = none)</span> <input id="maxrows" name="maxrows" class="maxrows" type="text" />
+                <br />
+                <span class="i18n"><b>CAUTION:</b> The number of rows can have a significant impact on the performance of the following action.</span>
+            </div>
+
+
+</script>
+<script type="text/x-jquery-tmpl" id="template-drillacross">
+</script>
+<script type="text/x-jquery-tmpl" id="template-drillthrough-list">
+        <div class="sidebar" style="border:1px solid #CCCCCC">
+            <h3><input type="checkbox" class="all_dimensions"/> &nbsp;<span class="i18n">Dimensions</span></h3>
+            <div class="sidebar_inner dimension_tree"></div>
+            <h3><input type="checkbox" class="all_measures"/> &nbsp;<span class="i18n">Measures</span></h3>
+            <div class="sidebar_inner measure_tree"></div>
+        </div>
+
+        <div class="sidebar_separator"></div>
+        <div class="clear"></div>
+
+
+</script>
+<script type="text/x-jquery-tmpl" id="template-drillthrough-dimensions">
+<ul>
+<% _.each(dimensions, function(dimension) { %>
+<% if (dimension.name != 'Measures' && (typeof dimension["visible"] == "undefined" || dimension["visible"])) { %>
+<li class='parent_dimension'>
+<span class="root collapsed sprite"></span>
+<input type="checkbox" class="check_dimension" />
+<a class="folder_collapsed sprite" href="#" title="<%= dimension.description ? dimension.description : dimension.caption %>"><%= dimension.caption %></a>
+<ul>
+<% _.each(dimension.hierarchies, function(hierarchy) { %>
+<% if (typeof hierarchy["visible"] == "undefined" || hierarchy["visible"]) { %>
+<% if (dimension.hierarchies.length > 1) { %>
+<li class="hierarchy hide">
+<a class="dimension" title="<%= hierarchy.description ? hierarchy.description : hierarchy.caption %>" href="#" key="<%= dimension.name %>###<%= hierarchy.name %>"><%= hierarchy.caption %></a>
+</li>
+<% } %>
+<% } %>
+<% _.each(hierarchy.levels, function(level) { %>
+<% if (typeof level["visible"] == "undefined" || level["visible"]) { %>
+<% if (level.caption != "(All)") { %>
+<li class="hide"> &nbsp;&nbsp;&nbsp;&nbsp;
+<input type="checkbox" class="check_level" value="<%= level.uniqueName %>" key="<%= dimension.name %>###<%= hierarchy.name %>"> <%= level.caption %></input>
+</li>
+<% } %>
+<% } %>
+<% }); %>
+<% }); %>
+</ul>
+<% } %>
+<% }); %>
+</ul>
+
+
+</script>
+
+<script type="text/x-jquery-tmpl" id="template-drillthrough-measures">
+<ul>
+<li>
+<span class="root expand sprite"></span>
+<a href="#" title="Measures" class="folder_expand i18n sprite">Measures</a>
+<ul>
+<% _.each(measures, function(measure) { %>
+<% if (typeof measure["visible"] == "undefined" || measure["visible"]) { %>
+<% if(typeof measure.calculated == "undefined" || (measure.calculated == false || allMeasures)) { %>
+<li> &nbsp;&nbsp;&nbsp;&nbsp;
+<input type="checkbox" class="check_level" value="<%= measure.uniqueName %>" key="Measures###<%= measure.name %>"> <%= measure.caption %></input>
+</li>
+<% } %>
+<% } %>
+<% }); %>
+</ul>
+</li>
+</ul>
+
+
+</script>
+<script type="text/javascript" src="js/ga.js"></script>
+<!--<script>document.write('<script src="//'-->
+<!--+ (location.host || 'localhost').split(':')[0]-->
+<!--+ ':35729/livereload.js"></'-->
+<!--+ 'script>')</script>-->
+</body>
+</html>

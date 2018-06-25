@@ -1,0 +1,471 @@
+<Schema name='foms' metamodelVersion="4.0">
+  <PhysicalSchema>
+    <Table schema='dbo' name='MV_EO_FEU_FACT_OLAP'/>
+    <Table schema='dbo' name='MV_EO_AGGR_OLAP'/>
+    <Table schema='dbo' name='MV_PR_23_REP_BY_NOM_USL_OLAP'/>
+    <Table schema='olap' name='CUBE_VMP_FACT'/>
+    <Table schema='olap' name='CUBE_VMP_PLAN'/>
+    <Table schema='olap' name='CUBE_CRIME_UP_REG'/>
+    <Table schema='olap' name='SPR_DATE'/>
+    <Table schema='olap' name='SPR_REGION'/><Query alias='dim4'>
+    <ExpressionView>
+      <SQL dialect="mssql"><![CDATA[
+           select "id", v_name, v_order AS ord FROM olap.SPR_VIEW_MO
+          ]]></SQL>
+    </ExpressionView>
+  </Query>
+    <Query alias='dim6'>
+      <ExpressionView>
+        <SQL dialect="mssql"><![CDATA[
+           select "id", v_name, v_order AS ord FROM olap.SPR_VMP_PROFIL
+          ]]></SQL>
+      </ExpressionView>
+    </Query>
+    <Query alias='dim7'>
+      <ExpressionView>
+        <SQL dialect="mssql"><![CDATA[
+           select "id", v_name, v_order AS ord FROM olap.SPR_VMP_GROUP
+          ]]></SQL>
+      </ExpressionView>
+    </Query>
+    <Query alias='dim13'>
+      <ExpressionView>
+        <SQL dialect="mssql"><![CDATA[
+           select "mo_id", NAME, ORD AS ord FROM olap.SPR_MO
+          ]]></SQL>
+      </ExpressionView>
+    </Query>
+    <Query alias='dim14'>
+      <ExpressionView>
+        <SQL dialect="mssql"><![CDATA[
+           select "id", v_name, v_order AS ord FROM olap.SPR_VMP_VIEW_NEW
+          ]]></SQL>
+      </ExpressionView>
+    </Query>
+    <Query alias='dim15'>
+      <ExpressionView>
+        <SQL dialect="mssql"><![CDATA[
+           select "id", v_name, v_order AS ord FROM olap.SPR_VMP_METHOD_NEW
+          ]]></SQL>
+      </ExpressionView>
+    </Query>
+    <Query alias='dim16'>
+      <ExpressionView>
+        <SQL dialect="mssql"><![CDATA[
+           select "id", v_name, v_order AS ord FROM olap.SPR_AGE
+          ]]></SQL>
+      </ExpressionView>
+    </Query>
+    <Query alias='dim17'>
+      <ExpressionView>
+        <SQL dialect="mssql"><![CDATA[
+           select "id", v_name, v_order AS ord FROM olap.SPR_GENDER
+          ]]></SQL>
+      </ExpressionView>
+    </Query>
+    <Query alias='dim18'>
+      <ExpressionView>
+        <SQL dialect="mssql"><![CDATA[
+           select "id", v_name, v_order AS ord FROM olap.SPR_CRIME_YEAR
+          ]]></SQL>
+      </ExpressionView>
+    </Query>
+    <Table schema='olap' name='SPR_CRIME_RAYON'/><Table schema='olap' name='SPR_CRIME_QUALIFICATION'/><Query alias='dim21'>
+    <ExpressionView>
+      <SQL dialect="mssql"><![CDATA[
+           select "id", v_name, v_order AS ord FROM olap.SPR_CRIME_TIME
+          ]]></SQL>
+    </ExpressionView>
+  </Query>
+    <Query alias='dim22'>
+      <ExpressionView>
+        <SQL dialect="mssql"><![CDATA[
+           select "id", v_name, v_order AS ord FROM olap.SPR_CRIME_CATEGORY
+          ]]></SQL>
+      </ExpressionView>
+    </Query>
+  </PhysicalSchema>
+  <Dimension table='SPR_REGION' key='Регион' name='Территория'>
+    <Attributes>
+      <Attribute name='Страна' keyColumn='country_id' nameColumn='country_name' hasHierarchy='false'/>
+      <Attribute name='Округ' keyColumn='district_id' nameColumn='district_name' hasHierarchy='false'/>
+      <Attribute name='Регион' keyColumn='region_id' nameColumn='r_name' hasHierarchy='false'/>
+    </Attributes>
+    <Hierarchies>
+      <Hierarchy name='Территория' hasAll='true'>
+        <Level attribute='Страна'/>        <Level attribute='Округ'/>        <Level attribute='Регион'/>    </Hierarchy>
+    </Hierarchies>
+  </Dimension>
+  <Dimension name='Календарь' table='SPR_DATE' type='TIME' key='dt'>
+    <Attributes>
+      <Attribute name='Год' keyColumn='dt_year' levelType='TimeYears' hasHierarchy='false'/>
+      <Attribute name='Квартал' levelType='TimeQuarters' hasHierarchy='false'>
+        <Key>
+          <Column name='dt_year'/>
+          <Column name='dt_quarter'/>
+        </Key>
+        <Name>
+          <Column name='dt_quarter'/>
+        </Name>
+      </Attribute>
+      <Attribute name='Полугодие' levelType='TimeHalfYear' hasHierarchy='false'>
+        <Key>
+          <Column name='dt_year'/>
+          <Column name='dt_half_year'/>
+        </Key>
+        <Name>
+          <Column name='dt_half_year'/>
+        </Name>
+      </Attribute>
+      <Attribute name='Номер месяца' levelType='TimeMonths' hasHierarchy='false'>
+        <Key>
+          <Column name='dt_year'/>
+          <Column name='dt_month'/>
+        </Key>
+        <Name>
+          <Column name='dt_month'/>
+        </Name>
+      </Attribute>
+      <Attribute name='День' levelType='TimeDays' hasHierarchy='false'>
+        <Key>
+          <Column name='dt_year'/>
+          <Column name='dt_month'/>
+          <Column name='dt_day'/>
+        </Key>
+        <Name>
+          <Column name='dt_day'/>
+        </Name>
+      </Attribute>
+      <Attribute name='Месяц' hasHierarchy='false'>
+        <Key>
+          <Column name='dt_year'/>
+          <Column name='dt_month'/>
+        </Key>
+        <Name>
+          <Column name='dt_month_name'/>
+        </Name>
+        <OrderBy>
+          <Column name='dt_month'/>
+        </OrderBy>
+      </Attribute>
+      <Attribute name='Date' keyColumn='dt_value' hasHierarchy='false'/>
+      <Attribute name='dt' keyColumn='date_id' hasHierarchy='false'/>
+    </Attributes>
+    <Hierarchies>
+      <Hierarchy name='Календарь' hasAll='true'>
+        <Level attribute='Год'/>
+        <Level attribute='Полугодие'/>
+        <Level attribute='Квартал'/>
+        <Level attribute='Месяц'/>
+      </Hierarchy>
+    </Hierarchies>
+  </Dimension>
+  <Dimension table='SPR_REGION' key='Регион' name='Территория страхования'>
+    <Attributes>
+      <Attribute name='Страна' keyColumn='country_id' nameColumn='country_name' hasHierarchy='false'/>
+      <Attribute name='Округ' keyColumn='district_id' nameColumn='district_name' hasHierarchy='false'/>
+      <Attribute name='Регион' keyColumn='region_id' nameColumn='r_name' hasHierarchy='false'/>
+    </Attributes>
+    <Hierarchies>
+      <Hierarchy name='Территория страхования' hasAll='true'>
+        <Level attribute='Страна'/>        <Level attribute='Округ'/>        <Level attribute='Регион'/>    </Hierarchy>
+    </Hierarchies>
+  </Dimension>
+  <Dimension table='dim4' key='Вид медицинской организации' name='Вид медицинской организации'>
+    <Attributes>
+      <Attribute name='Вид медицинской организации' column='v_name'>
+        <Key>
+          <Column name='id'/>
+        </Key>
+        <Name>
+          <Column name='v_name'/>
+        </Name>
+        <OrderBy>
+          <Column name='ord'/>
+        </OrderBy>
+      </Attribute>
+    </Attributes>
+  </Dimension>
+  <Dimension table='dim6' key='Профиль ВМП' name='Профиль ВМП'>
+    <Attributes>
+      <Attribute name='Профиль ВМП' column='v_name'>
+        <Key>
+          <Column name='id'/>
+        </Key>
+        <Name>
+          <Column name='v_name'/>
+        </Name>
+        <OrderBy>
+          <Column name='ord'/>
+        </OrderBy>
+      </Attribute>
+    </Attributes>
+  </Dimension>
+  <Dimension table='dim7' key='Группа ВМП' name='Группа ВМП'>
+    <Attributes>
+      <Attribute name='Группа ВМП' column='v_name'>
+        <Key>
+          <Column name='id'/>
+        </Key>
+        <Name>
+          <Column name='v_name'/>
+        </Name>
+        <OrderBy>
+          <Column name='ord'/>
+        </OrderBy>
+      </Attribute>
+    </Attributes>
+  </Dimension>
+  <Dimension table='dim13' key='Медицинская организация' name='Медицинская организация'>
+    <Attributes>
+      <Attribute name='Медицинская организация' column='NAME'>
+        <Key>
+          <Column name='mo_id'/>
+        </Key>
+        <Name>
+          <Column name='NAME'/>
+        </Name>
+        <OrderBy>
+          <Column name='ord'/>
+        </OrderBy>
+      </Attribute>
+    </Attributes>
+  </Dimension>
+  <Dimension table='dim14' key='Вид ВМП' name='Вид ВМП'>
+    <Attributes>
+      <Attribute name='Вид ВМП' column='v_name'>
+        <Key>
+          <Column name='id'/>
+        </Key>
+        <Name>
+          <Column name='v_name'/>
+        </Name>
+        <OrderBy>
+          <Column name='ord'/>
+        </OrderBy>
+      </Attribute>
+    </Attributes>
+  </Dimension>
+  <Dimension table='dim15' key='Метод ВМП' name='Метод ВМП'>
+    <Attributes>
+      <Attribute name='Метод ВМП' column='v_name'>
+        <Key>
+          <Column name='id'/>
+        </Key>
+        <Name>
+          <Column name='v_name'/>
+        </Name>
+        <OrderBy>
+          <Column name='ord'/>
+        </OrderBy>
+      </Attribute>
+    </Attributes>
+  </Dimension>
+  <Dimension table='dim16' key='Возрастная группа' name='Возрастная группа'>
+    <Attributes>
+      <Attribute name='Возрастная группа' column='v_name'>
+        <Key>
+          <Column name='id'/>
+        </Key>
+        <Name>
+          <Column name='v_name'/>
+        </Name>
+        <OrderBy>
+          <Column name='ord'/>
+        </OrderBy>
+      </Attribute>
+    </Attributes>
+  </Dimension>
+  <Dimension table='dim17' key='Пол' name='Пол'>
+    <Attributes>
+      <Attribute name='Пол' column='v_name'>
+        <Key>
+          <Column name='id'/>
+        </Key>
+        <Name>
+          <Column name='v_name'/>
+        </Name>
+        <OrderBy>
+          <Column name='ord'/>
+        </OrderBy>
+      </Attribute>
+    </Attributes>
+  </Dimension>
+  <Dimension table='dim18' key='Год постановки на учет ' name='Год постановки на учет '>
+    <Attributes>
+      <Attribute name='Год постановки на учет ' column='v_name'>
+        <Key>
+          <Column name='id'/>
+        </Key>
+        <Name>
+          <Column name='v_name'/>
+        </Name>
+        <OrderBy>
+          <Column name='ord'/>
+        </OrderBy>
+      </Attribute>
+    </Attributes>
+  </Dimension>
+  <Dimension table='SPR_CRIME_RAYON' key='Район' name='Территория г.Москвы'>
+    <Attributes>
+      <Attribute name='Округ' keyColumn='okrug_id' nameColumn='okrug_name' hasHierarchy='false'/>
+      <Attribute name='Район' keyColumn='rayon_id' nameColumn='rayon_name' hasHierarchy='false'/>
+    </Attributes>
+    <Hierarchies>
+      <Hierarchy name='Территория г.Москвы' hasAll='true'>
+        <Level attribute='Округ'/>        <Level attribute='Район'/>    </Hierarchy>
+    </Hierarchies>
+  </Dimension>
+  <Dimension table='SPR_CRIME_QUALIFICATION' key='Часть' name='Квалификация преступления '>
+    <Attributes>
+      <Attribute name='Глава' keyColumn='part_id' nameColumn='part_name' hasHierarchy='false'/>
+      <Attribute name='Статья' keyColumn='item_id' nameColumn='item_name' hasHierarchy='false'/>
+      <Attribute name='Часть' keyColumn='chapter_id' nameColumn='chapter_name' hasHierarchy='false'/>
+    </Attributes>
+    <Hierarchies>
+      <Hierarchy name='Квалификация преступления ' hasAll='true'>
+        <Level attribute='Глава'/>        <Level attribute='Статья'/>        <Level attribute='Часть'/>    </Hierarchy>
+    </Hierarchies>
+  </Dimension>
+  <Dimension table='dim21' key='Время совершения' name='Время совершения'>
+    <Attributes>
+      <Attribute name='Время совершения' column='v_name'>
+        <Key>
+          <Column name='id'/>
+        </Key>
+        <Name>
+          <Column name='v_name'/>
+        </Name>
+        <OrderBy>
+          <Column name='ord'/>
+        </OrderBy>
+      </Attribute>
+    </Attributes>
+  </Dimension>
+  <Dimension table='dim22' key='Категория преступления' name='Категория преступления'>
+    <Attributes>
+      <Attribute name='Категория преступления' column='v_name'>
+        <Key>
+          <Column name='id'/>
+        </Key>
+        <Name>
+          <Column name='v_name'/>
+        </Name>
+        <OrderBy>
+          <Column name='ord'/>
+        </OrderBy>
+      </Attribute>
+    </Attributes>
+  </Dimension>
+  <Cube name='foms' visible='true' cache='true' enabled='true'>
+    <Dimensions>
+      <Dimension source='Территория'/>
+      <Dimension source='Календарь'/>
+      <Dimension source='Территория страхования'/>
+      <Dimension source='Вид медицинской организации'/>
+      <Dimension source='Профиль ВМП'/>
+      <Dimension source='Группа ВМП'/>
+      <Dimension source='Медицинская организация'/>
+      <Dimension source='Вид ВМП'/>
+      <Dimension source='Метод ВМП'/>
+      <Dimension source='Возрастная группа'/>
+      <Dimension source='Пол'/>
+    </Dimensions>
+    <MeasureGroups>
+      <MeasureGroup name='cube_4' table='CUBE_VMP_FACT' schema='olap'>
+        <DimensionLinks>
+          <ForeignKeyLink dimension='Календарь' foreignKeyColumn='dt_id'/>
+          <ForeignKeyLink dimension='Территория' foreignKeyColumn='terr_id'/>
+          <ForeignKeyLink dimension='Медицинская организация' foreignKeyColumn='mo_id'/>
+          <ForeignKeyLink dimension='Вид медицинской организации' foreignKeyColumn='view_mo_id'/>
+          <ForeignKeyLink dimension='Профиль ВМП' foreignKeyColumn='prof_vmp_id'/>
+          <ForeignKeyLink dimension='Группа ВМП' foreignKeyColumn='group_vmp_id'/>
+          <ForeignKeyLink dimension='Вид ВМП' foreignKeyColumn='view_vmp_id'/>
+          <ForeignKeyLink dimension='Метод ВМП' foreignKeyColumn='method_vmp_id'/>
+          <ForeignKeyLink dimension='Территория страхования' foreignKeyColumn='terr_patient_id'/>
+          <ForeignKeyLink dimension='Возрастная группа' foreignKeyColumn='age_id'/>
+          <ForeignKeyLink dimension='Пол' foreignKeyColumn='gender_id'/>
+        </DimensionLinks>
+        <Measures>
+          <Measure name='Исполненные объемы ВМП' column='fact_vol' aggregator='sum' visible='false'  />
+          <Measure name='Исполненная стоимость ВМП' column='fact_sum' aggregator='sum' visible='true' formatString='##0,.00' />
+          <Measure name='Средняя стоимость одной госпитализации' column='avg_sum' aggregator='avg' visible='true' formatString='##0,.00' />
+          <Measure name='Общая длительность лечения' column='fact_day' aggregator='sum' visible='true'  />
+          <Measure name='Средняя длительность лечения' column='avg_day' aggregator='avg' visible='true'  />
+        </Measures>
+      </MeasureGroup>
+      <MeasureGroup name='cube_5' table='CUBE_VMP_PLAN' schema='olap'>
+        <DimensionLinks>
+          <ForeignKeyLink dimension='Календарь' foreignKeyColumn='dt_id'/>
+          <ForeignKeyLink dimension='Территория' foreignKeyColumn='terr_id'/>
+          <ForeignKeyLink dimension='Медицинская организация' foreignKeyColumn='mo_id'/>
+          <ForeignKeyLink dimension='Вид медицинской организации' foreignKeyColumn='view_mo_id'/>
+          <ForeignKeyLink dimension='Профиль ВМП' foreignKeyColumn='prof_vmp_id'/>
+          <ForeignKeyLink dimension='Группа ВМП' foreignKeyColumn='group_vmp_id'/>
+          <NoLink dimension='Территория страхования'/>
+          <NoLink dimension='Вид ВМП'/>
+          <NoLink dimension='Метод ВМП'/>
+          <NoLink dimension='Возрастная группа'/>
+          <NoLink dimension='Пол'/>
+        </DimensionLinks>
+        <Measures>
+          <Measure name='Утвержденные объемы ВМП' column='plan_vol' aggregator='sum' visible='true'  />
+          <Measure name='Утвержденная стоимость ВМП' column='plan_sum' aggregator='sum' visible='true' formatString='##0,.00' />
+          <Measure name='Расчетная стоимость' column='calc_sum' aggregator='sum' visible='true' formatString='##0,.00' />
+          <Measure name='Разница между утвержденной и расчетной' column='diff_sum' aggregator='sum' visible='true' formatString='##0,.00' />
+        </Measures>
+      </MeasureGroup>
+    </MeasureGroups>
+    <CalculatedMembers>
+      <CalculatedMember name='Исполненные объемы ВМП с начала года' dimension='Measures'>
+        <Formula>
+          CASE [Календарь].[Календарь].CurrentMember.Level.Name
+          WHEN 'Месяц' THEN Sum([Календарь].[Календарь].CurrentMember.Parent.Parent.Parent.Children.Item(0).Children.Item(0).Children.Item(0) : [Календарь].[Календарь].CurrentMember,[Measures].[Исполненные объемы ВМП])
+          WHEN 'Квартал' THEN Sum([Календарь].[Календарь].CurrentMember.Parent.Parent.Children.Item(0).Children.Item(0) : [Календарь].[Календарь].CurrentMember,[Measures].[Исполненные объемы ВМП])
+          ELSE Sum([Календарь].[Календарь].CurrentMember.Children, [Measures].[Исполненные объемы ВМП])
+          END
+        </Formula>
+      </CalculatedMember>
+      <CalculatedMember name='Исполненная стоимость ВМП с начала года' dimension='Measures'>
+        <Formula>
+          CASE [Календарь].[Календарь].CurrentMember.Level.Name
+          WHEN 'Месяц' THEN Sum([Календарь].[Календарь].CurrentMember.Parent.Parent.Parent.Children.Item(0).Children.Item(0).Children.Item(0) : [Календарь].[Календарь].CurrentMember,[Measures].[Исполненная стоимость ВМП])
+          WHEN 'Квартал' THEN Sum([Календарь].[Календарь].CurrentMember.Parent.Parent.Children.Item(0).Children.Item(0) : [Календарь].[Календарь].CurrentMember,[Measures].[Исполненная стоимость ВМП])
+          ELSE Sum([Календарь].[Календарь].CurrentMember.Children, [Measures].[Исполненная стоимость ВМП])
+          END
+        </Formula>
+      </CalculatedMember>
+      <CalculatedMember name='Общая длительность лечения с начала года' dimension='Measures'>
+        <Formula>
+          CASE [Календарь].[Календарь].CurrentMember.Level.Name
+          WHEN 'Месяц' THEN Sum([Календарь].[Календарь].CurrentMember.Parent.Parent.Parent.Children.Item(0).Children.Item(0).Children.Item(0) : [Календарь].[Календарь].CurrentMember,[Measures].[Общая длительность лечения])
+          WHEN 'Квартал' THEN Sum([Календарь].[Календарь].CurrentMember.Parent.Parent.Children.Item(0).Children.Item(0) : [Календарь].[Календарь].CurrentMember,[Measures].[Общая длительность лечения])
+          ELSE Sum([Календарь].[Календарь].CurrentMember.Children, [Measures].[Общая длительность лечения])
+          END
+        </Formula>
+      </CalculatedMember>
+      <CalculatedMember name='Средняя стоимость одной госпитализации с начала года' dimension='Measures'>
+        <Formula>
+          [Measures].[Исполненная стоимость ВМП с начала года] / [Measures].[Исполненные объемы ВМП с начала года]
+        </Formula>
+      </CalculatedMember>
+      <CalculatedMember name='Средняя длительность лечения с начала года' dimension='Measures'>
+        <Formula>
+          [Measures].[Общая длительность лечения с начала года] / [Measures].[Исполненные объемы ВМП с начала года]
+        </Formula>
+      </CalculatedMember>
+    </CalculatedMembers>
+  </Cube>
+  <Role name='ROLE_ADMIN'>
+    <SchemaGrant access='all'>
+    </SchemaGrant>
+  </Role><Role name='ROLE_USER_TEST1'>
+  <SchemaGrant access='none'>
+  </SchemaGrant>
+</Role><Role name='ROLE_USER_TEST2'>
+  <SchemaGrant access='none'>
+  </SchemaGrant>
+</Role><Role name='ROLE_USER_TEST3'>
+  <SchemaGrant access='none'>
+  </SchemaGrant>
+</Role></Schema>
